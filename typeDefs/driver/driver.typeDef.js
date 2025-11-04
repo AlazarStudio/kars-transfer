@@ -24,6 +24,11 @@ const driverTypeDef = `#graphql
         lng: Float
         updatedAt: Date
     }
+    input GeoPointInput {
+        lat: Float
+        lng: Float
+        updatedAt: Date
+    }
 
     type Driver{
         id: ID!                   
@@ -78,7 +83,7 @@ const driverTypeDef = `#graphql
         vehicleNumber: String
         driverLicenseNumber: String
         driverLicenseIssueYear: Int
-        location: GeoPoint
+        location: GeoPointInput
         extraEquipment: [String]            
         organizationId: String                  
         organizationConfirmed: Boolean
