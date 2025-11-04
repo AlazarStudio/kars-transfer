@@ -78,6 +78,7 @@ const driverTypeDef = `#graphql
         vehicleNumber: String
         driverLicenseNumber: String
         driverLicenseIssueYear: Int
+        location: GeoPoint
         extraEquipment: [String]            
         organizationId: String                  
         organizationConfirmed: Boolean
