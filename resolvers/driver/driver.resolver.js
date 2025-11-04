@@ -123,6 +123,7 @@ const driverResolver = {
           updatedData[key] = input[key]
         }
       }
+
       if (input.newPassword) {
         if (!input.oldPassword)
           throw new Error("Для обновления пароля укажи старый.")
@@ -133,19 +134,6 @@ const driverResolver = {
         if (!valid) throw new Error("Указан неверный пароль.")
         updatedData.password = await argon2.hash(input.newPassword)
       }
-
-      const valid = await argon2.verify(
-        currentDriver.password,
-        input["oldPassword"]
-      )
-      // const valid = await argon2.verify(currentDriver.password, input.oldPassword)
-
-      if (!valid) {
-        throw new Error("Указан неверный пароль.")
-      }
-
-      const hashedPassword = await argon2.hash(input["newPassword"])
-      updatedData["password"] = hashedPassword
 
       const updatedDriver = await prisma.driver.update({
         where: { id: id },
