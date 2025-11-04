@@ -53,10 +53,10 @@ const driverResolver = {
         registrationStatus
       } = input
 
-      let documents = []
+      let documentsPath = []
       if (documents && documents.length > 0) {
         for (const document of documents) {
-          documents.push(await uploadFiles(document))
+          documentsPath.push(await uploadFiles(document))
         }
       }
 
@@ -96,7 +96,7 @@ const driverResolver = {
         driverLicenseIssueYear,
         extraEquipment,
         organizationId: organizationId || undefined,
-        documents,
+        documents: documentsPath,
         registrationStatus
       }
 
