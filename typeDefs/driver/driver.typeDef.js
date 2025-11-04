@@ -11,7 +11,7 @@ const driverTypeDef = `#graphql
     #Пользовательский тип
     type DriverDocuments{
         driverPhoto: String
-        carPhotos: [String!]!
+        carPhotos: [String]
         stsPhoto: String
         ptsPhoto: String
         osagoPhoto: String
@@ -37,7 +37,7 @@ const driverTypeDef = `#graphql
         vehicleNumber: String
         driverLicenseNumber: String
         driverLicenseIssueYear: Int
-        extraEquipment: [String!]! 
+        extraEquipment: [String]
         organization: Organization            
         organizationId: String                  
         organizationConfirmed: Boolean
@@ -62,7 +62,7 @@ const driverTypeDef = `#graphql
         vehicleNumber: String
         driverLicenseNumber: String
         driverLicenseIssueYear: Date
-        extraEquipment: [String!]!           
+        extraEquipment: [String]
         organizationId: String                  
         documents: DriverDocumentsUpdateInput
         registrationStatus: DriverRegistrationStatus 
@@ -78,7 +78,7 @@ const driverTypeDef = `#graphql
         vehicleNumber: String
         driverLicenseNumber: String
         driverLicenseIssueYear: Date
-        extraEquipment: [String!]            
+        extraEquipment: [String]            
         organizationId: String                  
         organizationConfirmed: Boolean
         documents: DriverDocumentsUpdateInput
@@ -88,7 +88,7 @@ const driverTypeDef = `#graphql
 
     input DriverDocumentsUpdateInput{
         driverPhoto: Upload
-        carPhotos: [Upload!]!
+        carPhotos: [Upload]
         stsPhoto: Upload
         ptsPhoto: Upload
         osagoPhoto: Upload
@@ -97,8 +97,8 @@ const driverTypeDef = `#graphql
 
     type DriverConnection{
         # totalPages: Int!
-        totalCount: Int!
-        drivers: [Driver!]!
+        totalCount: Int
+        drivers: [Driver]
     }
 
     input DriverPaginationInput{
