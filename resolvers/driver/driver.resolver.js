@@ -50,7 +50,8 @@ const driverResolver = {
         driverLicenseIssueYear,
         extraEquipment,
         organizationId,
-        registrationStatus
+        registrationStatus,
+        documents
       } = input
 
       let documentsPath = []
@@ -93,7 +94,7 @@ const driverResolver = {
         car,
         vehicleNumber,
         driverLicenseNumber,
-        driverLicenseIssueYear: licenseYearInt,
+        driverLicenseIssueYear,
         extraEquipment,
         organizationId,
         registrationStatus: registrationStatus ?? "PENDING",
