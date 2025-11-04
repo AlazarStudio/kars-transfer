@@ -114,8 +114,8 @@ const driverTypeDef = `#graphql
     }
 
     type Mutation{
-        createDriver(input: DriverCreateInput!): Driver!
-        updateDriver(id: ID!, input: DriverUpdateInput): Driver!
+        createDriver(input: DriverCreateInput!, documents: [Upload]): Driver!
+        updateDriver(id: ID!, input: DriverUpdateInput, documents: [Upload]): Driver!
         updateDriverDocuments(id: ID!, documents: Upload): Driver!
         deleteDriver(id: ID!): Driver!
     }

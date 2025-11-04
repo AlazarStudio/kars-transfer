@@ -54,6 +54,13 @@ const driverResolver = {
         registrationStatus
       } = input
 
+      let imagePaths = []
+            if (images && images.length > 0) {
+              for (const image of images) {
+                imagePaths.push(await uploadImage(image))
+              }
+            }
+
       const hashedPassword = await argon2.hash(password)
 
       const existingDriver = await prisma.driver.findFirst({
