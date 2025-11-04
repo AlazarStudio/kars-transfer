@@ -38,7 +38,7 @@ const driverResolver = {
     }
   },
   Mutation: {
-    createDriver: async (_, { input, documents }) => {
+    createDriver: async (_, { input }) => {
       const {
         name,
         phone,
@@ -85,7 +85,7 @@ const driverResolver = {
         }
       }
 
-      const createdData = {
+      const createdData = clean({
         name,
         phone,
         email,
@@ -93,22 +93,18 @@ const driverResolver = {
         car,
         vehicleNumber,
         driverLicenseNumber,
-        driverLicenseIssueYear,
+        driverLicenseIssueYear: licenseYearInt,
         extraEquipment,
-        organizationId: organizationId || undefined,
-        documents: documentsPath,
-        registrationStatus
-      }
+        organizationId,
+        registrationStatus: registrationStatus ?? "PENDING",
+        documents: await buildDocuments(documents)
+      })
 
       // добавить логирование?
 
-      const newdDriver = await prisma.driver.create({
-        data: createdData
-      })
-
-      pubsub.publish(DRIVER_CREATED, { driverCreated: newdDriver })
-
-      return newdDriver
+      const newDriver = await prisma.driver.create({ data: createdData })
+      pubsub.publish(DRIVER_CREATED, { driverCreated: newDriver })
+      return newDriver
     },
     updateDriver: async (_, { id, input }) => {
       const updatedData = {}
@@ -126,14 +122,15 @@ const driverResolver = {
           updatedData[key] = input[key]
         }
       }
-
-      if (input["newPassword"]) {
-        // if (input.newPassword) {
-        if (!input["oldPassword"]) {
-          throw new Error(
-            "Для обновления пароля необходимо указать предыдущий пароль."
-          )
-        }
+      if (input.newPassword) {
+        if (!input.oldPassword)
+          throw new Error("Для обновления пароля укажи старый.")
+        const valid = await argon2.verify(
+          currentDriver.password,
+          input.oldPassword
+        )
+        if (!valid) throw new Error("Указан неверный пароль.")
+        updatedData.password = await argon2.hash(input.newPassword)
       }
 
       const valid = await argon2.verify(
@@ -159,16 +156,12 @@ const driverResolver = {
       return updatedDriver
     },
     updateDriverDocuments: async (_, { id, documents }) => {
-      const updatedDocumentsData = []
-
-      updatedDocumentsData.push(await uploadFiles(documents))
-
+      const setDocs = await uploadFiles(documents)
       await prisma.driver.update({
-        where: { id: id },
-        data: {
-          documents: updatedDocumentsData
-        }
+        where: { id },
+        data: { documents: { set: setDocs } } // если это одна картинка
       })
+      return prisma.driver.findUnique({ where: { id } })
     },
     deleteDriver: async (_, { id }) => {
       const deletedDriver = await prisma.driver.update({
@@ -188,6 +181,32 @@ const driverResolver = {
       })
     }
   }
+}
+
+const clean = (o) =>
+  Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined))
+
+const buildDocuments = async (docsInput) => {
+  if (!docsInput) return undefined
+  const {
+    driverPhoto,
+    carPhotos,
+    stsPhoto,
+    ptsPhoto,
+    osagoPhoto,
+    licensePhoto
+  } = docsInput
+
+  const out = {}
+  if (driverPhoto) out.driverPhoto = await uploadFiles(driverPhoto)
+  if (Array.isArray(carPhotos) && carPhotos.length)
+    out.carPhotos = await Promise.all(carPhotos.map(uploadFiles))
+  if (stsPhoto) out.stsPhoto = await uploadFiles(stsPhoto)
+  if (ptsPhoto) out.ptsPhoto = await uploadFiles(ptsPhoto)
+  if (osagoPhoto) out.osagoPhoto = await uploadFiles(osagoPhoto)
+  if (licensePhoto) out.licensePhoto = await uploadFiles(licensePhoto)
+
+  return Object.keys(out).length ? { set: out } : undefined // <-- envelope!
 }
 
 export default driverResolver
