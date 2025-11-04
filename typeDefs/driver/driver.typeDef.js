@@ -61,7 +61,7 @@ const driverTypeDef = `#graphql
         car: String
         vehicleNumber: String
         driverLicenseNumber: String
-        driverLicenseIssueYear: Date
+        driverLicenseIssueYear: Int
         extraEquipment: [String]
         organizationId: String                  
         documents: DriverDocumentsUpdateInput
@@ -77,7 +77,7 @@ const driverTypeDef = `#graphql
         car: String
         vehicleNumber: String
         driverLicenseNumber: String
-        driverLicenseIssueYear: Date
+        driverLicenseIssueYear: Int
         extraEquipment: [String]            
         organizationId: String                  
         organizationConfirmed: Boolean
