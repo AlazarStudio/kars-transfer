@@ -38,7 +38,7 @@ const driverResolver = {
     }
   },
   Mutation: {
-    createDriver: async (_, { input }) => {
+    createDriver: async (_, { input, documents }) => {
       const {
         name,
         phone,
@@ -50,16 +50,15 @@ const driverResolver = {
         driverLicenseIssueYear,
         extraEquipment,
         organizationId,
-        documents,
         registrationStatus
       } = input
 
-      let imagePaths = []
-            if (images && images.length > 0) {
-              for (const image of images) {
-                imagePaths.push(await uploadImage(image))
-              }
-            }
+      let documents = []
+      if (documents && documents.length > 0) {
+        for (const document of documents) {
+          documents.push(await uploadFiles(document))
+        }
+      }
 
       const hashedPassword = await argon2.hash(password)
 
@@ -115,42 +114,49 @@ const driverResolver = {
       const updatedData = {}
 
       const currentDriver = await prisma.driver.findUnique({
-        where: { id: id },
+        where: { id: id }
       })
 
       for (let key in input) {
-        if ( key !== 'newPassword' && key !== 'oldPassword' && input[key] !== undefined ){
+        if (
+          key !== "newPassword" &&
+          key !== "oldPassword" &&
+          input[key] !== undefined
+        ) {
           updatedData[key] = input[key]
         }
       }
 
-      if (input['newPassword']) {
-      // if (input.newPassword) {
-        if (!input['oldPassword']) {
+      if (input["newPassword"]) {
+        // if (input.newPassword) {
+        if (!input["oldPassword"]) {
           throw new Error(
             "Для обновления пароля необходимо указать предыдущий пароль."
           )
+        }
       }
-    }
 
-    const valid = await argon2.verify(currentDriver.password, input['oldPassword'])
-    // const valid = await argon2.verify(currentDriver.password, input.oldPassword)
+      const valid = await argon2.verify(
+        currentDriver.password,
+        input["oldPassword"]
+      )
+      // const valid = await argon2.verify(currentDriver.password, input.oldPassword)
 
-    if (!valid) {
-      throw new Error("Указан неверный пароль.")
-    }
+      if (!valid) {
+        throw new Error("Указан неверный пароль.")
+      }
 
-    const hashedPassword = await argon2.hash(input['newPassword']) 
-    updatedData['password'] = hashedPassword
+      const hashedPassword = await argon2.hash(input["newPassword"])
+      updatedData["password"] = hashedPassword
 
-    const updatedDriver = await prisma.driver.update({
-      where: { id: id },
-      data: updatedData
-    })
-     
-    pubsub.publish(DRIVER_CREATED, { driverCreated: updatedDriver })
+      const updatedDriver = await prisma.driver.update({
+        where: { id: id },
+        data: updatedData
+      })
 
-    return updatedDriver
+      pubsub.publish(DRIVER_CREATED, { driverCreated: updatedDriver })
+
+      return updatedDriver
     },
     updateDriverDocuments: async (_, { id, documents }) => {
       const updatedDocumentsData = []
