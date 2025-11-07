@@ -50,8 +50,8 @@ const driverTypeDef = `#graphql
         registrationStatus: DriverRegistrationStatus 
         location: GeoPoint
         rating: Float
-        # transfers: [Transfer]
-        # transferMessages: [TransferMessage]        
+        transfers: [Transfer]
+        transferMessages: [TransferMessage]        
         active: Boolean                  
         # TransferReview: [TransferReview]
         # TransferChat: [TransferChat]

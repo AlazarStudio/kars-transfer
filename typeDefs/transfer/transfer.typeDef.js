@@ -191,17 +191,23 @@ const transferTypeDef = `#graphql
         personId: ID
         dispatcherId: ID
         organizationId: ID
+        all: Boolean
         skip: Int
         take: Int
     }
 
+    type TransferConnection{
+        totalCount: Int
+        transfers: [Transfer]
+    }
+
     type Query {
-        transfers(pagination: TransferPaginationInput): [Transfer]
+        transfers(pagination: TransferPaginationInput!): TransferConnection!
         transfer(id: ID!): Transfer!
     }
 
     type Mutation {
-        createTransfer(input: TransferInput): Transfer!
+        createTransfer(input: TransferInput!): Transfer!
         updateTransfer(id: ID!, input: TransferInput!): Transfer!
     }
 

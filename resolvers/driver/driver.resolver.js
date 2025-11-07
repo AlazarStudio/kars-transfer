@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client"
 import argon2 from "argon2"
-import { uploadFiles } from "../../exports/uploadFiles.js"
+// import { uploadFiles } from "../../exports/uploadFiles.js"
+import { uploadImage } from "../../exports/uploadImage.js"
 import { DRIVER_CREATED, pubsub } from "../../exports/pubsub.js"
 // import { errorMonitor } from "ws"
 
@@ -22,19 +23,56 @@ const driverResolver = {
             take: take || undefined,
             include: { organization: true }
           })
+        
+        const moscowDates = []
+
+        for (let driver of drivers) {
+          moscowDates.push({"createdAt": new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                                        + 'T' + new Date(driver["createdAt"]).toLocaleString().split(', ')[1],
+                            "updatedAt": new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                                        + 'T' + new Date(driver["updatedAt"]).toLocaleString().split(', ')[1]
+          })
+        }
+
+        for (let i in moscowDates) {
+          Object.assign(drivers[i], moscowDates[i])
+        }
+      
       return { drivers, totalCount }
     },
     driverById: async (_, { id }) => {
-      return await prisma.driver.findUnique({
+      const driver = await prisma.driver.findUnique({
         where: { id: id },
         include: { organization: true }
       })
+      
+      const moscowDate = {}
+
+      moscowDate["createdAt"] = new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(driver["createdAt"]).toLocaleString().split(', ')[1]
+      moscowDate["updatedAt"] = new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(driver["updatedAt"]).toLocaleString().split(', ')[1]
+      
+      Object.assign(driver, moscowDate)
+
+      return driver
     },
     driverByEmail: async (_, { email }) => {
-      return await prisma.driver.findUnique({
+      const driver = await prisma.driver.findUnique({
         where: { email: email },
         include: { organization: true }
       })
+
+      const moscowDate = {}
+
+      moscowDate["createdAt"] = new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(driver["createdAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(driver["createdAt"]).toLocaleString().split(', ')[1]
+      moscowDate["updatedAt"] = new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(driver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(driver["updatedAt"]).toLocaleString().split(', ')[1]
+      
+      Object.assign(driver, moscowDate)
+
+      return driver
     }
   },
   Mutation: {
@@ -105,6 +143,16 @@ const driverResolver = {
 
       const newDriver = await prisma.driver.create({ data: createdData })
       pubsub.publish(DRIVER_CREATED, { driverCreated: newDriver })
+
+      const moscowDate = {}
+
+      moscowDate["createdAt"] = new Date(newDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(newDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(newDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(newDriver["createdAt"]).toLocaleString().split(', ')[1]
+      moscowDate["updatedAt"] = new Date(newDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(newDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(newDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(newDriver["updatedAt"]).toLocaleString().split(', ')[1]
+      
+      Object.assign(newDriver, moscowDate)
+
       return newDriver
     },
     updateDriver: async (_, { id, input }) => {
@@ -142,6 +190,15 @@ const driverResolver = {
 
       pubsub.publish(DRIVER_CREATED, { driverCreated: updatedDriver })
 
+      const moscowDate = {}
+
+      moscowDate["createdAt"] = new Date(updatedDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(updatedDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(updatedDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(updatedDriver["createdAt"]).toLocaleString().split(', ')[1]
+      moscowDate["updatedAt"] = new Date(updatedDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(updatedDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(updatedDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(updatedDriver["updatedAt"]).toLocaleString().split(', ')[1]
+      
+      Object.assign(updatedDriver, moscowDate)
+
       return updatedDriver
     },
     updateDriverDocuments: async (_, { id, documents }) => {
@@ -150,7 +207,19 @@ const driverResolver = {
         where: { id },
         data: { documents: { set: setDocs } } // если это одна картинка
       })
-      return prisma.driver.findUnique({ where: { id } })
+
+      const driverWithUpdatedDocs = await prisma.driver.findUnique({ where: { id } })
+
+      const moscowDate = {}
+
+      moscowDate["createdAt"] = new Date(driverWithUpdatedDocs["createdAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(driverWithUpdatedDocs["createdAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(driverWithUpdatedDocs["createdAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(driverWithUpdatedDocs["createdAt"]).toLocaleString().split(', ')[1]
+      moscowDate["updatedAt"] = new Date(driverWithUpdatedDocs["updatedAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(driverWithUpdatedDocs["updatedAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(driverWithUpdatedDocs["updatedAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(driverWithUpdatedDocs["updatedAt"]).toLocaleString().split(', ')[1]
+      
+      Object.assign(driverWithUpdatedDocs, moscowDate)
+      
+      return driverWithUpdatedDocs
     },
     deleteDriver: async (_, { id }) => {
       const deletedDriver = await prisma.driver.update({
@@ -160,6 +229,17 @@ const driverResolver = {
           active: false
         }
       })
+
+      const moscowDate = {}
+
+      moscowDate["createdAt"] = new Date(deletedDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(deletedDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(deletedDriver["createdAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(deletedDriver["createdAt"]).toLocaleString().split(', ')[1]
+      moscowDate["updatedAt"] = new Date(deletedDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[2] + "-" + new Date(deletedDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[1] + "-" + new Date(deletedDriver["updatedAt"]).toLocaleString().split(', ')[0].split('.')[0]
+                + 'T' + new Date(deletedDriver["updatedAt"]).toLocaleString().split(', ')[1]
+      
+      Object.assign(deletedDriver, moscowDate)
+
+      
       return deletedDriver
     }
   },
@@ -187,13 +267,13 @@ const buildDocuments = async (docsInput) => {
   } = docsInput
 
   const out = {}
-  if (driverPhoto) out.driverPhoto = await uploadFiles(driverPhoto)
+  if (driverPhoto) out.driverPhoto = await uploadImage(driverPhoto)
   if (Array.isArray(carPhotos) && carPhotos.length)
-    out.carPhotos = await Promise.all(carPhotos.map(uploadFiles))
-  if (stsPhoto) out.stsPhoto = await uploadFiles(stsPhoto)
-  if (ptsPhoto) out.ptsPhoto = await uploadFiles(ptsPhoto)
-  if (osagoPhoto) out.osagoPhoto = await uploadFiles(osagoPhoto)
-  if (licensePhoto) out.licensePhoto = await uploadFiles(licensePhoto)
+    out.carPhotos = await Promise.all(carPhotos.map(uploadImage))
+  if (stsPhoto) out.stsPhoto = await uploadImage(stsPhoto)
+  if (ptsPhoto) out.ptsPhoto = await uploadImage(ptsPhoto)
+  if (osagoPhoto) out.osagoPhoto = await uploadImage(osagoPhoto)
+  if (licensePhoto) out.licensePhoto = await uploadImage(licensePhoto)
 
   return Object.keys(out).length ? { set: out } : undefined // <-- envelope!
 }

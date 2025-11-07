@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 const organizationResolver = {
     Query: {
         organizations: async()  => {
-            return await prisma.organization.findMany()
+            return await prisma.organization.findMany({})
         },
         organization: async(_, { id }) => {
             return await prisma.organization.findUnique({ where: { id: id } })
