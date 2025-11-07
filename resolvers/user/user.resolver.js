@@ -764,7 +764,6 @@ const sendResetPasswordEmail = async (userEmail, token) => {
   // Ссылка для сброса пароля (замените домен на нужный)
   const resetLink = `https://karsavia.ru/reset-password?token=${token}`
   // const resetLink = `http://192.168.0.16:5173/reset-password?token=${token}`
-
 }
 
 export default userResolver

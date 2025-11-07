@@ -74,7 +74,7 @@ const dispatcherResolver = {
           airlinePrices: true
         }
       })
-    }, 
+    },
     getPriceCategory: async (_, { id }, context) => {
       await allMiddleware(context)
       return await prisma.priceCategory.findUnique({
@@ -86,7 +86,7 @@ const dispatcherResolver = {
           airlinePrices: true
         }
       })
-    }, 
+    },
     getAllNotifications: async (_, { pagination }, context) => {
       await allMiddleware(context)
       const { user } = context

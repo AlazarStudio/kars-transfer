@@ -30,7 +30,6 @@ import { uploadFiles, deleteFiles } from "../../exports/uploadFiles.js"
 import { ensureNoOverlap } from "../../exports/ensureNoOverlap.js"
 // import { logger } from "../../utils/logger.js"
 
-
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
@@ -479,9 +478,6 @@ const requestResolver = {
         }
       })
 
-
-
-
       // Логирование создания заявки
       try {
         const description =
@@ -653,7 +649,6 @@ const requestResolver = {
             }
           })
 
-
           pubsub.publish(NOTIFICATION, {
             notification: {
               __typename: "ExtendRequestNotification",
@@ -748,7 +743,6 @@ const requestResolver = {
             person: true
           }
         })
-
 
         try {
           await logAction({

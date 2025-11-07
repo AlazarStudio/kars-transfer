@@ -409,7 +409,6 @@ const chatResolver = {
             text: message.text
           }
         })
-
       }
 
       // Обновляем данные о прочтении сообщений

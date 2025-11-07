@@ -13,7 +13,6 @@ import {
   AIRLINE_UPDATED
 } from "../../exports/pubsub.js"
 
-
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
@@ -579,14 +578,13 @@ const airlineResolver = {
         where: { airlineId: parent.id },
         include: { airport: true }
       })
-    },
+    }
     // Определяем резольвер для поля airlineContract
     // airlineContract: async (parent) => {
     //   return await prisma.airlineContract.findMany({
     //     where: {airlineId: parent.id}
     //   })
     // }
-
   },
 
   AirlineDepartment: {
@@ -610,7 +608,6 @@ const airlineResolver = {
   },
 
   AirlinePersonal: {
-
     position: async (parent) => {
       if (parent.positionId) {
         return await prisma.position.findUnique({
