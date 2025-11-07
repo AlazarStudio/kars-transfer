@@ -471,6 +471,7 @@ const buildDocuments = async (
   { envelopeForUpdate = false } = {}
 ) => {
   if (!docsInput) return undefined
+
   const {
     driverPhoto,
     carPhotos,
@@ -480,20 +481,40 @@ const buildDocuments = async (
     licensePhoto
   } = docsInput
 
-  const out = clean({
-    driverPhoto: driverPhoto ? await uploadImage(driverPhoto) : undefined,
-    carPhotos:
-      Array.isArray(carPhotos) && carPhotos.length
-        ? await Promise.all(carPhotos.map(uploadImage))
-        : undefined,
-    stsPhoto: stsPhoto ? await uploadImage(stsPhoto) : undefined,
-    ptsPhoto: ptsPhoto ? await uploadImage(ptsPhoto) : undefined,
-    osagoPhoto: osagoPhoto ? await uploadImage(osagoPhoto) : undefined,
-    licensePhoto: licensePhoto ? await uploadImage(licensePhoto) : undefined
-  })
+  const driverPhotoPath = driverPhoto
+    ? await uploadImage(driverPhoto)
+    : undefined
+  const stsPhotoPath = stsPhoto ? await uploadImage(stsPhoto) : undefined
+  const ptsPhotoPath = ptsPhoto ? await uploadImage(ptsPhoto) : undefined
+  const osagoPhotoPath = osagoPhoto ? await uploadImage(osagoPhoto) : undefined
+  const licensePhotoPath = licensePhoto
+    ? await uploadImage(licensePhoto)
+    : undefined
 
-  if (!Object.keys(out).length) return undefined
-  // create -> объект; update -> { set: объект }
+  const carPhotosArr =
+    Array.isArray(carPhotos) && carPhotos.length
+      ? await Promise.all(carPhotos.map(uploadImage))
+      : []
+
+  const out = {
+    ...(driverPhotoPath ? { driverPhoto: driverPhotoPath } : {}),
+    ...(stsPhotoPath ? { stsPhoto: stsPhotoPath } : {}),
+    ...(ptsPhotoPath ? { ptsPhoto: ptsPhotoPath } : {}),
+    ...(osagoPhotoPath ? { osagoPhoto: osagoPhotoPath } : {}),
+    ...(licensePhotoPath ? { licensePhoto: licensePhotoPath } : {}),
+    carPhotos: carPhotosArr
+  }
+
+  if (
+    !out.driverPhoto &&
+    !out.stsPhoto &&
+    !out.ptsPhoto &&
+    !out.osagoPhoto &&
+    !out.licensePhoto &&
+    out.carPhotos.length === 0
+  )
+    return undefined
+
   return envelopeForUpdate ? { set: out } : out
 }
 

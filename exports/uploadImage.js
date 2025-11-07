@@ -3,34 +3,6 @@ import { createWriteStream, existsSync, mkdirSync } from "fs"
 import { promises as fsPromises } from "fs"
 import path from "path"
 import sharp from "sharp"
-// import { logger } from "../utils/logger.js"
-
-// export const uploadImage = async (image) => {
-//   const { createReadStream, filename } = await image;
-//   const stream = createReadStream();
-//   const uploadsDir = path.join(process.cwd(), "uploads");
-
-//   if (!existsSync(uploadsDir)) {
-//     mkdirSync(uploadsDir);
-//   }
-
-//   const timestamp = Date.now();
-//   const uniqueFilename = `${timestamp}-${path.parse(filename).name}.webp`;
-//   const uploadPath = path.join(uploadsDir, uniqueFilename);
-//   const tempPath = path.join(uploadsDir, `${timestamp}-${filename}.tmp`);
-
-//   const out = createWriteStream(tempPath);
-//   stream.pipe(out);
-//   await finished(out);
-
-//   await sharp(tempPath).webp({ quality: 80 }).toFile(uploadPath);
-
-//   // Увеличиваем задержку перед удалением
-//   await new Promise((resolve) => setTimeout(resolve, 500));
-//   await fsPromises.unlink(tempPath);
-
-//   return `/uploads/${uniqueFilename}`;
-// };
 
 // Вспомогательная функция для преобразования потока в буфер
 const streamToBuffer = (stream) =>

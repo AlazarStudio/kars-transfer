@@ -471,7 +471,6 @@ model Driver {
   TransferReview         TransferReview[]
   TransferChat           TransferChat[]
   TransferMessageRead    TransferMessageRead[]
-  
 }
 
 // --- Связка "заявка ↔ пассажиры (AirlinePersonal)"
