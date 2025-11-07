@@ -180,15 +180,8 @@ const driverResolver = {
         extraEquipment,
         organizationId,
         registrationStatus,
-        documents
+        documents: docsInput
       } = input
-
-      let documentsPath = []
-      if (documents && documents.length > 0) {
-        for (const document of documents) {
-          documentsPath.push(await uploadFiles(document))
-        }
-      }
 
       const hashedPassword = await argon2.hash(password)
 
@@ -215,6 +208,8 @@ const driverResolver = {
         }
       }
 
+      const docs = await buildDocuments(docsInput, { envelopeForUpdate: false })
+
       const createdData = clean({
         name,
         phone,
@@ -227,7 +222,7 @@ const driverResolver = {
         extraEquipment,
         organizationId,
         registrationStatus: registrationStatus ?? "PENDING",
-        documents: await buildDocuments(documents)
+        ...(docs ? { documents: docs } : {})
       })
 
       // добавить логирование?
@@ -471,7 +466,10 @@ const driverResolver = {
 const clean = (o) =>
   Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined))
 
-const buildDocuments = async (docsInput) => {
+const buildDocuments = async (
+  docsInput,
+  { envelopeForUpdate = false } = {}
+) => {
   if (!docsInput) return undefined
   const {
     driverPhoto,
@@ -482,16 +480,21 @@ const buildDocuments = async (docsInput) => {
     licensePhoto
   } = docsInput
 
-  const out = {}
-  if (driverPhoto) out.driverPhoto = await uploadImage(driverPhoto)
-  if (Array.isArray(carPhotos) && carPhotos.length)
-    out.carPhotos = await Promise.all(carPhotos.map(uploadImage))
-  if (stsPhoto) out.stsPhoto = await uploadImage(stsPhoto)
-  if (ptsPhoto) out.ptsPhoto = await uploadImage(ptsPhoto)
-  if (osagoPhoto) out.osagoPhoto = await uploadImage(osagoPhoto)
-  if (licensePhoto) out.licensePhoto = await uploadImage(licensePhoto)
+  const out = clean({
+    driverPhoto: driverPhoto ? await uploadImage(driverPhoto) : undefined,
+    carPhotos:
+      Array.isArray(carPhotos) && carPhotos.length
+        ? await Promise.all(carPhotos.map(uploadImage))
+        : undefined,
+    stsPhoto: stsPhoto ? await uploadImage(stsPhoto) : undefined,
+    ptsPhoto: ptsPhoto ? await uploadImage(ptsPhoto) : undefined,
+    osagoPhoto: osagoPhoto ? await uploadImage(osagoPhoto) : undefined,
+    licensePhoto: licensePhoto ? await uploadImage(licensePhoto) : undefined
+  })
 
-  return Object.keys(out).length ? { set: out } : undefined // <-- envelope!
+  if (!Object.keys(out).length) return undefined
+  // create -> объект; update -> { set: объект }
+  return envelopeForUpdate ? { set: out } : out
 }
 
 export default driverResolver
