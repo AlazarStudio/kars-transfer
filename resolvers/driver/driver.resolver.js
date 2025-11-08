@@ -3,6 +3,7 @@ import argon2 from "argon2"
 // import { uploadFiles } from "../../exports/uploadFiles.js"
 import { uploadImage } from "../../exports/uploadImage.js"
 import { DRIVER_CREATED, pubsub } from "../../exports/pubsub.js"
+import { dateFormatter } from "../../exports/dateTimeFormatterVersion2.js"
 // import { errorMonitor } from "ws"
 
 const prisma = new PrismaClient()
@@ -19,8 +20,8 @@ const driverResolver = {
           })
         : await prisma.driver.findMany({
             where: { active: true },
-            skip: skip ? skip * take : undefined,
-            take: take || undefined,
+            skip: skip,
+            take: take,
             include: { organization: true }
           })
 
@@ -28,40 +29,8 @@ const driverResolver = {
 
       for (let driver of drivers) {
         moscowDates.push({
-          createdAt:
-            new Date(driver["createdAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(driver["createdAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(driver["createdAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(driver["createdAt"]).toLocaleString().split(", ")[1],
-          updatedAt:
-            new Date(driver["updatedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(driver["updatedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(driver["updatedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(driver["updatedAt"]).toLocaleString().split(", ")[1]
+          createdAt: dateFormatter(driver["createdAt"]),
+          updatedAt: dateFormatter(driver["updatedAt"])
         })
       }
 
@@ -79,40 +48,8 @@ const driverResolver = {
 
       const moscowDate = {}
 
-      moscowDate["createdAt"] =
-        new Date(driver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(driver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(driver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(driver["createdAt"]).toLocaleString().split(", ")[1]
-      moscowDate["updatedAt"] =
-        new Date(driver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(driver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(driver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(driver["updatedAt"]).toLocaleString().split(", ")[1]
+      moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
 
       Object.assign(driver, moscowDate)
 
@@ -126,40 +63,8 @@ const driverResolver = {
 
       const moscowDate = {}
 
-      moscowDate["createdAt"] =
-        new Date(driver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(driver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(driver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(driver["createdAt"]).toLocaleString().split(", ")[1]
-      moscowDate["updatedAt"] =
-        new Date(driver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(driver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(driver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(driver["updatedAt"]).toLocaleString().split(", ")[1]
+      moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
 
       Object.assign(driver, moscowDate)
 
@@ -232,40 +137,8 @@ const driverResolver = {
 
       const moscowDate = {}
 
-      moscowDate["createdAt"] =
-        new Date(newDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(newDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(newDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(newDriver["createdAt"]).toLocaleString().split(", ")[1]
-      moscowDate["updatedAt"] =
-        new Date(newDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(newDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(newDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(newDriver["updatedAt"]).toLocaleString().split(", ")[1]
+      moscowDate["createdAt"] = dateFormatter(newDriver["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(newDriver["updatedAt"])
 
       Object.assign(newDriver, moscowDate)
 
@@ -308,40 +181,8 @@ const driverResolver = {
 
       const moscowDate = {}
 
-      moscowDate["createdAt"] =
-        new Date(updatedDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(updatedDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(updatedDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(updatedDriver["createdAt"]).toLocaleString().split(", ")[1]
-      moscowDate["updatedAt"] =
-        new Date(updatedDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(updatedDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(updatedDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(updatedDriver["updatedAt"]).toLocaleString().split(", ")[1]
+      moscowDate["createdAt"] = dateFormatter(updatedDriver["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(updatedDriver["updatedAt"])
 
       Object.assign(updatedDriver, moscowDate)
 
@@ -360,44 +201,8 @@ const driverResolver = {
 
       const moscowDate = {}
 
-      moscowDate["createdAt"] =
-        new Date(driverWithUpdatedDocs["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(driverWithUpdatedDocs["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(driverWithUpdatedDocs["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(driverWithUpdatedDocs["createdAt"])
-          .toLocaleString()
-          .split(", ")[1]
-      moscowDate["updatedAt"] =
-        new Date(driverWithUpdatedDocs["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(driverWithUpdatedDocs["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(driverWithUpdatedDocs["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(driverWithUpdatedDocs["updatedAt"])
-          .toLocaleString()
-          .split(", ")[1]
+      moscowDate["createdAt"] = dateFormatter(driverWithUpdatedDocs["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(driverWithUpdatedDocs["updatedAt"])
 
       Object.assign(driverWithUpdatedDocs, moscowDate)
 
@@ -414,41 +219,8 @@ const driverResolver = {
 
       const moscowDate = {}
 
-      moscowDate["createdAt"] =
-        new Date(deletedDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(deletedDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(deletedDriver["createdAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(deletedDriver["createdAt"]).toLocaleString().split(", ")[1]
-      moscowDate["updatedAt"] =
-        new Date(deletedDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[2] +
-        "-" +
-        new Date(deletedDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[1] +
-        "-" +
-        new Date(deletedDriver["updatedAt"])
-          .toLocaleString()
-          .split(", ")[0]
-          .split(".")[0] +
-        "T" +
-        new Date(deletedDriver["updatedAt"]).toLocaleString().split(", ")[1]
-
+      moscowDate["createdAt"] = dateFormatter(deletedDriver["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(deletedDriver["updatedAt"])
       Object.assign(deletedDriver, moscowDate)
 
       return deletedDriver

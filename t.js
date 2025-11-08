@@ -1,1 +1,3 @@
-console.log(String(new Date("2025-12-02T20:02:00")))
+const s = {key1: 'cheburek'}
+
+console.log(s['lool'])

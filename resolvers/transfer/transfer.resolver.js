@@ -5,6 +5,7 @@ import {
   TRANSFER_UPDATED
 } from "../../exports/pubsub.js"
 import { printIntrospectionSchema } from "graphql"
+import { dateFormatter } from "../../exports/dateTimeFormatterVersion2.js"
 
 const prisma = new PrismaClient()
 
@@ -16,183 +17,23 @@ const transferResolver = {
       const transfers = all
         ? await prisma.transfer.findMany({}) // добавить позже фильтрацию
         : await prisma.transfer.findMany({
-            skip: skip ? skip * take : undefined,
-            take: take || undefined
+            skip: skip,
+            take: take
           })
 
       const moscowDates = []
 
       for (let transfer of transfers) {
         moscowDates.push({
-          scheduledPickupAt:
-            new Date(transfer["scheduledPickupAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["scheduledPickupAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["scheduledPickupAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] + //Приводит дату к YYYY-MM-DD
-            "T" +
-            new Date(transfer["scheduledPickupAt"])
-              .toLocaleString()
-              .split(", ")[1],
-
-          driverAssignmentAt:
-            new Date(transfer["driverAssignmentAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["driverAssignmentAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["driverAssignmentAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer["driverAssignmentAt"])
-              .toLocaleString()
-              .split(", ")[1],
-
-          orderAcceptanceAt:
-            new Date(transfer["orderAcceptanceAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["orderAcceptanceAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["orderAcceptanceAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer["orderAcceptanceAt"])
-              .toLocaleString()
-              .split(", ")[1],
-
-          arrivedToPassengerAt:
-            new Date(transfer["arrivedToPassengerAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["arrivedToPassengerAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["arrivedToPassengerAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer["arrivedToPassengerAt"])
-              .toLocaleString()
-              .split(", ")[1],
-
-          departedAt:
-            new Date(transfer["departedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["departedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["departedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer["departedAt"]).toLocaleString().split(", ")[1],
-
-          arrivedAt:
-            new Date(transfer["arrivedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["arrivedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["arrivedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer["arrivedAt"]).toLocaleString().split(", ")[1],
-
-          finishedAt:
-            new Date(transfer["finishedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["finishedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["finishedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer["finishedAt"]).toLocaleString().split(", ")[1],
-
-          createdAt:
-            new Date(transfer["createdAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["createdAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["createdAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer["createdAt"]).toLocaleString().split(", ")[1],
-
-          updatedAt:
-            new Date(transfer["updatedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer["updatedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer["updatedAt"])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer["updatedAt"]).toLocaleString().split(", ")[1]
+          "scheduledPickupAt": dateFormatter(transfer["scheduledPickupAt"]),
+          "driverAssignmentAt": dateFormatter(transfer["driverAssignmentAt"]),
+          "orderAcceptanceAt": dateFormatter(transfer["orderAcceptanceAt"]),
+          "arrivedToPassengerAt": dateFormatter(transfer["arrivedToPassengerAt"]),
+          "departedAt": dateFormatter(transfer["departedAt"]),
+          "arrivedAt": dateFormatter(transfer["arrivedAt"]),
+          "finishedAt": dateFormatter(transfer["finishedAt"]),
+          "createdAt": dateFormatter(transfer["createdAt"]),
+          "updatedAt": dateFormatter(transfer["updatedAt"]),
         })
       }
 
@@ -209,39 +50,15 @@ const transferResolver = {
       })
 
       const moscowDate = {} // Создаем объект для записи времени в московском часовом поясе
-      for (let key in transfer) {
-        if (
-          [
-            "scheduledPickupAt",
-            "driverAssignmentAt",
-            "orderAcceptanceAt",
-            "arrivedToPassengerAt",
-            "departedAt",
-            "arrivedAt",
-            "finishedAt",
-            "createdAt",
-            "updatedAt"
-          ].includes(key)
-        ) {
-          moscowDate[key] =
-            new Date(transfer[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(transfer[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(transfer[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(transfer[key]).toLocaleString().split(", ")[1]
-        }
-      }
+      moscowDate["scheduledPickupAt"] = dateFormatter(transfer["scheduledPickupAt"])
+      moscowDate["driverAssignmentAt"] = dateFormatter(transfer["driverAssignmentAt"])
+      moscowDate["orderAcceptanceAt"] = dateFormatter(transfer["orderAcceptanceAt"])
+      moscowDate["arrivedToPassengerAt"] = dateFormatter(transfer["arrivedToPassengerAt"])
+      moscowDate["departedAt"] = dateFormatter(transfer["departedAt"])
+      moscowDate["arrivedAt"] = dateFormatter(transfer["arrivedAt"])
+      moscowDate["finishedAt"] = dateFormatter(transfer["finishedAt"])
+      moscowDate["createdAt"] = dateFormatter(transfer["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(transfer["updatedAt"])
 
       Object.assign(transfer, moscowDate)
       return transfer
@@ -250,7 +67,7 @@ const transferResolver = {
   Mutation: {
     createTransfer: async (_, { input }) => {
       const Data = {}
-      const moscowDate = {}
+      
 
       for (let key in input) {
         if (
@@ -267,18 +84,9 @@ const transferResolver = {
           ].includes(key)
         ) {
           Data[key] = new Date(input[key])
-          moscowDate[key] =
-            new Date(input[key]).toLocaleString().split(", ")[0].split(".")[2] +
-            "-" +
-            new Date(input[key]).toLocaleString().split(", ")[0].split(".")[1] +
-            "-" +
-            new Date(input[key]).toLocaleString().split(", ")[0].split(".")[0] + //YYYY-MM-DD
-            "T" +
-            new Date(input[key]).toLocaleString().split(", ")[1] //
         } else {
           Data[key] = input[key]
         }
-        console.log(Data)
       }
 
       const newTransfer = await prisma.transfer.create({
@@ -287,14 +95,44 @@ const transferResolver = {
 
       pubsub.publish(TRANSFER_CREATED, { transferCreated: newTransfer })
 
+      const moscowDate = {}
+
+      moscowDate["scheduledPickupAt"] = dateFormatter(newTransfer["scheduledPickupAt"])
+      moscowDate["driverAssignmentAt"] = dateFormatter(newTransfer["driverAssignmentAt"])
+      moscowDate["orderAcceptanceAt"] = dateFormatter(newTransfer["orderAcceptanceAt"])
+      moscowDate["arrivedToPassengerAt"] = dateFormatter(newTransfer["arrivedToPassengerAt"])
+      moscowDate["departedAt"] = dateFormatter(newTransfer["departedAt"])
+      moscowDate["arrivedAt"] = dateFormatter(newTransfer["arrivedAt"])
+      moscowDate["finishedAt"] = dateFormatter(newTransfer["finishedAt"])
+      moscowDate["createdAt"] = dateFormatter(newTransfer["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(newTransfer["updatedAt"])
+
       Object.assign(newTransfer, moscowDate)
+
       return newTransfer
     },
     updateTransfer: async (_, { id, input }) => {
       const updatedData = {}
 
       for (let key in input) {
-        if (input[key] !== undefined) updatedData[key] = input[key]
+        if ( input[key] !== undefined ){
+          if ( [
+            "scheduledPickupAt",
+            "driverAssignmentAt",
+            "orderAcceptanceAt",
+            "arrivedToPassengerAt",
+            "departedAt",
+            "arrivedAt",
+            "finishedAt",
+            "createdAt",
+            "updatedAt"
+          ].includes(key) ){
+            updatedData[key] = new Date(input[key])
+          }
+          else {
+            updatedData[key] = input[key]
+          }
+        }
       }
 
       const updatedTransfer = await prisma.transfer.update({
@@ -305,44 +143,21 @@ const transferResolver = {
       pubsub.publish(TRANSFER_UPDATED, { transferUpdated: updatedTransfer })
 
       const moscowDate = {}
-      for (let key in updatedTransfer) {
-        if (
-          [
-            "scheduledPickupAt",
-            "driverAssignmentAt",
-            "orderAcceptanceAt",
-            "arrivedToPassengerAt",
-            "departedAt",
-            "arrivedAt",
-            "finishedAt",
-            "createdAt",
-            "updatedAt"
-          ].includes(key)
-        ) {
-          moscowDate[key] =
-            new Date(updatedTransfer[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(updatedTransfer[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(updatedTransfer[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(updatedTransfer[key]).toLocaleString().split(", ")[1]
-        }
-      }
+
+      moscowDate["scheduledPickupAt"] = dateFormatter(updatedTransfer["scheduledPickupAt"])
+      moscowDate["driverAssignmentAt"] = dateFormatter(updatedTransfer["driverAssignmentAt"])
+      moscowDate["orderAcceptanceAt"] = dateFormatter(updatedTransfer["orderAcceptanceAt"])
+      moscowDate["arrivedToPassengerAt"] = dateFormatter(updatedTransfer["arrivedToPassengerAt"])
+      moscowDate["departedAt"] = dateFormatter(updatedTransfer["departedAt"])
+      moscowDate["arrivedAt"] = dateFormatter(updatedTransfer["arrivedAt"])
+      moscowDate["finishedAt"] = dateFormatter(updatedTransfer["finishedAt"])
+      moscowDate["createdAt"] = dateFormatter(updatedTransfer["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(updatedTransfer["updatedAt"])
+
       Object.assign(updatedTransfer, moscowDate)
 
       return updatedTransfer
-    }
-  },
+    }},
   Transfer: {
     dispatcher: async (parent, _) => {
       return await prisma.dispatcher.findUnique({
@@ -355,27 +170,9 @@ const transferResolver = {
       })
 
       const moscowDate = {}
-      for (let key in driver) {
-        if (["createdAt", "updatedAt"].includes(key)) {
-          moscowDate[key] =
-            new Date(driver[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[2] +
-            "-" +
-            new Date(driver[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[1] +
-            "-" +
-            new Date(driver[key])
-              .toLocaleString()
-              .split(", ")[0]
-              .split(".")[0] +
-            "T" +
-            new Date(driver[key]).toLocaleString().split(", ")[1]
-        }
-      }
+
+      moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+      moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
 
       Object.assign(driver, moscowDate)
 
@@ -398,5 +195,4 @@ const transferResolver = {
     }
   }
 }
-
 export default transferResolver
