@@ -421,12 +421,12 @@ enum TransferReviewAuthor {
 
 // --- Embedded types
 type DriverDocuments {
-  driverPhoto  String?
+  driverPhoto  String[]
   carPhotos    String[]
-  stsPhoto     String?
-  ptsPhoto     String?
-  osagoPhoto   String?
-  licensePhoto String?
+  stsPhoto     String[]
+  ptsPhoto     String[]
+  osagoPhoto   String[]
+  licensePhoto String[]
 }
 
 type GeoPoint {

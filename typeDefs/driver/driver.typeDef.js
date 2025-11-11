@@ -10,12 +10,12 @@ const driverTypeDef = `#graphql
 
     #Пользовательский тип
     type DriverDocuments{
-        driverPhoto: String
+        driverPhoto: [String]
         carPhotos: [String]
-        stsPhoto: String
-        ptsPhoto: String
-        osagoPhoto: String
-        licensePhoto: String
+        stsPhoto: [String]
+        ptsPhoto: [String]
+        osagoPhoto: [String]
+        licensePhoto: [String]
     }
 
     #Пользовательский тип
@@ -52,7 +52,7 @@ const driverTypeDef = `#graphql
         rating: Float
         transfers: [Transfer]
         transferMessages: [TransferMessage]        
-        active: Boolean                  
+        active: Boolean
         # TransferReview: [TransferReview]
         # TransferChat: [TransferChat]
         # TransferMessageRead: [TransferMessageRead]
@@ -69,7 +69,7 @@ const driverTypeDef = `#graphql
         driverLicenseIssueYear: Int
         extraEquipment: [String]
         organizationId: String                  
-        documents: DriverDocumentsUpdateInput
+        # documents: DriverDocumentsUpdateInput
         registrationStatus: DriverRegistrationStatus 
     }
 
@@ -93,12 +93,12 @@ const driverTypeDef = `#graphql
     }
 
     input DriverDocumentsUpdateInput{
-        driverPhoto: Upload
         carPhotos: [Upload]
-        stsPhoto: Upload
-        ptsPhoto: Upload
-        osagoPhoto: Upload
-        licensePhoto: Upload
+        driverPhoto: [Upload]
+        stsPhoto: [Upload]
+        ptsPhoto: [Upload]
+        osagoPhoto: [Upload]
+        licensePhoto: [Upload]
     }
 
     type DriverConnection{
@@ -120,7 +120,7 @@ const driverTypeDef = `#graphql
     }
 
     type Mutation{
-        createDriver(input: DriverCreateInput!): Driver!
+        createDriver(input: DriverCreateInput!, driverPhoto: [Upload], carPhotos: [Upload], stsPhoto: [Upload], ptsPhoto: [Upload], osagoPhoto: [Upload], licensePhoto: [Upload]): Driver!
         updateDriver(id: ID!, input: DriverUpdateInput): Driver!
         updateDriverDocuments(id: ID!, input: DriverDocumentsUpdateInput!): Driver!
         deleteDriver(id: ID!): Driver!

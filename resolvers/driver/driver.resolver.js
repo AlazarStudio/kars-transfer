@@ -1,14 +1,18 @@
 import { PrismaClient } from "@prisma/client"
 import argon2 from "argon2"
+import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs"
 // import { uploadFiles } from "../../exports/uploadFiles.js"
 import { uploadImage } from "../../exports/uploadImage.js"
 import { DRIVER_CREATED, pubsub } from "../../exports/pubsub.js"
 import { dateFormatter } from "../../exports/dateTimeFormatterVersion2.js"
+import { uploadFiles } from "../../exports/uploadFiles.js"
 // import { errorMonitor } from "ws"
 
 const prisma = new PrismaClient()
 
 const driverResolver = {
+  Upload: GraphQLUpload,
+
   Query: {
     drivers: async (_, { pagination }) => {
       const { skip, take, all } = pagination || {}
@@ -72,7 +76,18 @@ const driverResolver = {
     }
   },
   Mutation: {
-    createDriver: async (_, { input }) => {
+    createDriver: async (
+      _,
+      {
+        input,
+        driverPhoto,
+        carPhotos,
+        stsPhoto,
+        ptsPhoto,
+        osagoPhoto,
+        licensePhoto
+      }
+    ) => {
       const {
         name,
         phone,
@@ -84,38 +99,85 @@ const driverResolver = {
         driverLicenseIssueYear,
         extraEquipment,
         organizationId,
-        registrationStatus,
-        documents: docsInput
+        registrationStatus
       } = input
 
-      const hashedPassword = await argon2.hash(password)
-
-      const existingDriver = await prisma.driver.findFirst({
-        where: { OR: [{ email }, { phone }] }
-      })
-
-      if (existingDriver) {
-        if (existingDriver.email === email && existingDriver.phone === phone) {
-          throw new Error(
-            "Водитель с таким email и телефоном уже существует",
-            "DRIVER_EXISTS"
-          )
-        } else if (existingDriver.email === email) {
-          throw new Error(
-            "Водитель с таким email уже существует",
-            "EMAIL_EXISTS"
-          )
-        } else if (existingDriver.phone === phone) {
-          throw new Error(
-            "Водитель с таким телефоном уже существует",
-            "PHONE_EXISTS"
-          )
+      if (email || phone) {
+        const existing = await prisma.driver.findFirst({
+          where: {
+            OR: [...(email ? [{ email }] : []), ...(phone ? [{ phone }] : [])]
+          }
+        })
+        if (existing) {
+          if (existing.email === email && existing.phone === phone)
+            throw new Error("Водитель с таким email и телефоном уже существует")
+          if (existing.email === email)
+            throw new Error("Водитель с таким email уже существует")
+          if (existing.phone === phone)
+            throw new Error("Водитель с таким телефоном уже существует")
         }
       }
 
-      const docs = await buildDocuments(docsInput, { envelopeForUpdate: false })
+      const hashedPassword = password ? await argon2.hash(password) : undefined
 
-      const createdData = clean({
+      let driverPhotoPaths = []
+      if (driverPhoto != undefined) {
+        if (driverPhoto.length > 0) {
+          for (const image of driverPhoto) {
+            driverPhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let carPhotosPaths = []
+      if (carPhotos != undefined) {
+        if (carPhotos.length > 0) {
+          for (const image of carPhotos) {
+            carPhotosPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let stsPhotoPaths = []
+      if (stsPhoto != undefined) {
+        if (stsPhoto.length > 0) {
+          for (const image of stsPhoto) {
+            stsPhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let ptsPhotoPaths = []
+      if (ptsPhoto != undefined) {
+        if (ptsPhoto.length > 0) {
+          for (const image of ptsPhoto) {
+            ptsPhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let osagoPhotoPaths = []
+      if (osagoPhoto != undefined) {
+        if (osagoPhoto.length > 0) {
+          for (const image of osagoPhoto) {
+            osagoPhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let licensePhotoPaths = []
+      if (licensePhoto != undefined) {
+        if (licensePhoto.length > 0) {
+          for (const image of licensePhoto) {
+            licensePhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+
+      const documents = {
+        driverPhoto: driverPhotoPaths,
+        carPhotos: carPhotosPaths,
+        stsPhoto: stsPhotoPaths,
+        ptsPhoto: ptsPhotoPaths,
+        osagoPhoto: osagoPhotoPaths,
+        licensePhoto: licensePhotoPaths
+      }
+      const data = {
         name,
         phone,
         email,
@@ -127,23 +189,20 @@ const driverResolver = {
         extraEquipment,
         organizationId,
         registrationStatus: registrationStatus ?? "PENDING",
-        ...(docs ? { documents: docs } : {})
-      })
+        documents
+      }
 
-      // добавить логирование?
+      console.log("data " + JSON.stringify(data))
 
-      const newDriver = await prisma.driver.create({ data: createdData })
+      const newDriver = await prisma.driver.create({ data })
+
       pubsub.publish(DRIVER_CREATED, { driverCreated: newDriver })
 
-      const moscowDate = {}
-
-      moscowDate["createdAt"] = dateFormatter(newDriver["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(newDriver["updatedAt"])
-
-      Object.assign(newDriver, moscowDate)
-
+      newDriver.createdAt = dateFormatter(newDriver.createdAt)
+      newDriver.updatedAt = dateFormatter(newDriver.updatedAt)
       return newDriver
     },
+
     updateDriver: async (_, { id, input }) => {
       const updatedData = {}
 
@@ -201,8 +260,12 @@ const driverResolver = {
 
       const moscowDate = {}
 
-      moscowDate["createdAt"] = dateFormatter(driverWithUpdatedDocs["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(driverWithUpdatedDocs["updatedAt"])
+      moscowDate["createdAt"] = dateFormatter(
+        driverWithUpdatedDocs["createdAt"]
+      )
+      moscowDate["updatedAt"] = dateFormatter(
+        driverWithUpdatedDocs["updatedAt"]
+      )
 
       Object.assign(driverWithUpdatedDocs, moscowDate)
 
@@ -233,61 +296,6 @@ const driverResolver = {
       })
     }
   }
-}
-
-const clean = (o) =>
-  Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined))
-
-const buildDocuments = async (
-  docsInput,
-  { envelopeForUpdate = false } = {}
-) => {
-  if (!docsInput) return undefined
-
-  const {
-    driverPhoto,
-    carPhotos,
-    stsPhoto,
-    ptsPhoto,
-    osagoPhoto,
-    licensePhoto
-  } = docsInput
-
-  const driverPhotoPath = driverPhoto
-    ? await uploadImage(driverPhoto)
-    : undefined
-  const stsPhotoPath = stsPhoto ? await uploadImage(stsPhoto) : undefined
-  const ptsPhotoPath = ptsPhoto ? await uploadImage(ptsPhoto) : undefined
-  const osagoPhotoPath = osagoPhoto ? await uploadImage(osagoPhoto) : undefined
-  const licensePhotoPath = licensePhoto
-    ? await uploadImage(licensePhoto)
-    : undefined
-
-  const carPhotosArr =
-    Array.isArray(carPhotos) && carPhotos.length
-      ? await Promise.all(carPhotos.map(uploadImage))
-      : []
-
-  const out = {
-    ...(driverPhotoPath ? { driverPhoto: driverPhotoPath } : {}),
-    ...(stsPhotoPath ? { stsPhoto: stsPhotoPath } : {}),
-    ...(ptsPhotoPath ? { ptsPhoto: ptsPhotoPath } : {}),
-    ...(osagoPhotoPath ? { osagoPhoto: osagoPhotoPath } : {}),
-    ...(licensePhotoPath ? { licensePhoto: licensePhotoPath } : {}),
-    carPhotos: carPhotosArr
-  }
-
-  if (
-    !out.driverPhoto &&
-    !out.stsPhoto &&
-    !out.ptsPhoto &&
-    !out.osagoPhoto &&
-    !out.licensePhoto &&
-    out.carPhotos.length === 0
-  )
-    return undefined
-
-  return envelopeForUpdate ? { set: out } : out
 }
 
 export default driverResolver
