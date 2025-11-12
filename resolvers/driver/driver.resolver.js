@@ -177,6 +177,7 @@ const driverResolver = {
         osagoPhoto: osagoPhotoPaths,
         licensePhoto: licensePhotoPaths
       }
+      
       const data = {
         name,
         phone,
@@ -203,7 +204,19 @@ const driverResolver = {
       return newDriver
     },
 
-    updateDriver: async (_, { id, input }) => {
+    updateDriver: async (
+      _,
+      {
+        id,
+        input,
+        driverPhoto,
+        carPhotos,
+        stsPhoto,
+        ptsPhoto,
+        osagoPhoto,
+        licensePhoto
+      }
+    ) => {
       const updatedData = {}
 
       const currentDriver = await prisma.driver.findUnique({
@@ -229,6 +242,76 @@ const driverResolver = {
         )
         if (!valid) throw new Error("Указан неверный пароль.")
         updatedData.password = await argon2.hash(input.newPassword)
+      }
+
+      let driverPhotoPaths = currentDriver.driverPhotoPaths
+        ? currentDriver.driverPhotoPaths
+        : []
+      if (driverPhoto != undefined) {
+        if (driverPhoto.length > 0) {
+          for (const image of driverPhoto) {
+            driverPhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let carPhotosPaths = currentDriver.carPhotosPaths
+        ? currentDriver.carPhotosPaths
+        : []
+      if (carPhotos != undefined) {
+        if (carPhotos.length > 0) {
+          for (const image of carPhotos) {
+            carPhotosPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let stsPhotoPaths = currentDriver.stsPhotoPaths
+        ? currentDriver.stsPhotoPaths
+        : []
+      if (stsPhoto != undefined) {
+        if (stsPhoto.length > 0) {
+          for (const image of stsPhoto) {
+            stsPhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let ptsPhotoPaths = currentDriver.ptsPhotoPaths
+        ? currentDriver.ptsPhotoPaths
+        : []
+      if (ptsPhoto != undefined) {
+        if (ptsPhoto.length > 0) {
+          for (const image of ptsPhoto) {
+            ptsPhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let osagoPhotoPaths = currentDriver.osagoPhotoPaths
+        ? currentDriver.osagoPhotoPaths
+        : []
+      if (osagoPhoto != undefined) {
+        if (osagoPhoto.length > 0) {
+          for (const image of osagoPhoto) {
+            osagoPhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+      let licensePhotoPaths = currentDriver.licensePhotoPaths
+        ? currentDriver.licensePhotoPaths
+        : []
+      if (licensePhoto != undefined) {
+        if (licensePhoto.length > 0) {
+          for (const image of licensePhoto) {
+            licensePhotoPaths.push(await uploadFiles(image))
+          }
+        }
+      }
+
+      updatedData.documents = {
+        driverPhoto: driverPhotoPaths,
+        carPhotos: carPhotosPaths,
+        stsPhoto: stsPhotoPaths,
+        ptsPhoto: ptsPhotoPaths,
+        osagoPhoto: osagoPhotoPaths,
+        licensePhoto: licensePhotoPaths
       }
 
       const updatedDriver = await prisma.driver.update({
