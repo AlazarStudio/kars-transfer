@@ -120,7 +120,7 @@ const driverTypeDef = `#graphql
         all: Boolean
     }
 
-    input driverSignInput {
+    input transferSignInput {
         email: String!
         password: String!
     }
@@ -134,7 +134,7 @@ const driverTypeDef = `#graphql
     type Mutation{
         createDriver(input: DriverCreateInput!, driverPhoto: [Upload], carPhotos: [Upload], stsPhoto: [Upload], ptsPhoto: [Upload], osagoPhoto: [Upload], licensePhoto: [Upload]): Driver!
         updateDriver(id: ID!, input: DriverUpdateInput): Driver!
-        driverSignIn(input: driverSignInput): DriverAuthPayload!
+        transferSignIn(input: transferSignInput): DriverAuthPayload!
         updateDriverDocuments(id: ID!, input: DriverDocumentsUpdateInput!): Driver!
         deleteDriver(id: ID!): Driver!
     }

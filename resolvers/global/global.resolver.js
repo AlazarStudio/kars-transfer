@@ -8,6 +8,65 @@ import { allMiddleware } from "../../middlewares/authMiddleware.js"
 import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
+const SUBJECT = {
+  USER: "USER",
+  DRIVER: "DRIVER",
+  AIRLINE_PERSONAL: "AIRLINE_PERSONAL"
+}
+
+async function resolveAuthSubject(identifier) {
+  const id = String(identifier).trim()
+
+  // ищем всех параллельно
+  const [
+    userByLogin,
+    // userByEmail,
+    driverByEmail,
+    // airlinePersonalByEmail,   // если появится email
+    airlinePersonalByNumber
+  ] = await Promise.all([
+    prisma.user.findUnique({ where: { login: id } }),
+    // prisma.user.findUnique({ where: { email: id } }),
+    prisma.driver.findUnique({ where: { email: id } }),
+    prisma.airlinePersonal.findFirst({ where: { number: id } })
+  ])
+
+  const candidates = []
+
+  if (userByLogin) candidates.push({ type: SUBJECT.USER, entity: userByLogin })
+  // else if (userByEmail) candidates.push({ type: SUBJECT.USER, entity: userByEmail })
+
+  if (driverByEmail)
+    candidates.push({ type: SUBJECT.DRIVER, entity: driverByEmail })
+
+  if (airlinePersonalByNumber)
+    candidates.push({
+      type: SUBJECT.AIRLINE_PERSONAL,
+      entity: airlinePersonalByNumber
+    })
+
+  if (!candidates.length) {
+    throw new Error("Invalid credentials")
+  }
+
+  // если один и тот же id может совпасть в разных таблицах — либо
+  // кидаем ошибку, либо задаём приоритет (например, USER > DRIVER > AIRLINE_PERSONAL)
+  if (candidates.length > 1) {
+    // вариант 1: строгая ошибка
+    // throw new Error('Ambiguous identifier, contact support');
+
+    // вариант 2: приоритет
+    const byPriority =
+      candidates.find((c) => c.type === SUBJECT.USER) ||
+      candidates.find((c) => c.type === SUBJECT.DRIVER) ||
+      candidates[0]
+
+    return byPriority
+  }
+
+  return candidates[0]
+}
+
 const globalResolver = {
   Upload: GraphQLUpload,
   Mutation: {
@@ -23,6 +82,105 @@ const globalResolver = {
       await finished(out)
 
       return { filename, mimetype, encoding }
+    },
+
+    transferSignIn: async (_, { input }) => {
+      const { identifier, password, fingerprint, token2FA } = input
+
+      // 1. Находим сущность и её тип
+      const { entity, type } = await resolveAuthSubject(identifier)
+
+      // 2. Базовые проверки
+      if ("active" in entity && !entity.active) {
+        throw new Error("User is not active")
+      }
+
+      if (
+        !entity.password ||
+        !(await argon2.verify(entity.password, password))
+      ) {
+        throw new Error("Invalid credentials")
+      }
+
+      let jwtPayload = { subjectType: type }
+      // let refreshToken = null
+
+      // 3. Спец-логика по типам
+
+      if (type === SUBJECT.USER) {
+        // 2FA только для User
+
+        // if (entity.is2FAEnabled) {
+        //   let verified = false
+
+        //   if (entity.twoFAMethod === "TOTP") {
+        //     verified = speakeasy.totp.verify({
+        //       secret: entity.twoFASecret,
+        //       encoding: "base32",
+        //       token: token2FA
+        //     })
+        //   } else if (entity.twoFAMethod === "HOTP") {
+        //     verified = speakeasy.hotp.verify({
+        //       secret: entity.twoFASecret,
+        //       encoding: "base32",
+        //       token: token2FA,
+        //       counter: 0
+        //     })
+        //   }
+
+        //   if (!verified) {
+        //     throw new Error("Invalid 2FA token")
+        //   }
+        // }
+
+        jwtPayload = {
+          ...jwtPayload,
+          userId: entity.id,
+          role: entity.role,
+          hotelId: entity.hotelId,
+          airlineId: entity.airlineId
+        }
+
+        // refreshToken = uuidv4()
+        // await prisma.user.update({
+        //   where: { id: entity.id },
+        //   data: { refreshToken, fingerprint }
+        // })
+      }
+
+      if (type === SUBJECT.DRIVER) {
+        jwtPayload = {
+          ...jwtPayload,
+          driverId: entity.id,
+          role: "DRIVER",
+          organizationId: entity.organizationId
+        }
+        // если нужен refreshToken для водителя — тут же создаёшь/сохраняешь
+      }
+
+      if (type === SUBJECT.AIRLINE_PERSONAL) {
+        jwtPayload = {
+          ...jwtPayload,
+          airlinePersonalId: entity.id,
+          role: "AIRLINE_PERSONAL",
+          airlineId: entity.airlineId
+        }
+      }
+
+      // 4. Генерим JWT
+      const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, {
+        expiresIn: "24h"
+      })
+
+      // 5. Общий ответ
+      return {
+        token,
+        // refreshToken,
+        subjectType: type,
+        user: type === SUBJECT.USER ? entity : null,
+        driver: type === SUBJECT.DRIVER ? entity : null,
+        airlinePersonal: type === SUBJECT.AIRLINE_PERSONAL ? entity : null
+      }
     }
   }
 }
