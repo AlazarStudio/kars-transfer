@@ -193,8 +193,6 @@ const driverResolver = {
         documents
       }
 
-      console.log("data " + JSON.stringify(data))
-
       const newDriver = await prisma.driver.create({ data })
 
       pubsub.publish(DRIVER_CREATED, { driverCreated: newDriver })
