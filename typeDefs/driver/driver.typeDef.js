@@ -58,12 +58,12 @@ const driverTypeDef = `#graphql
         # TransferMessageRead: [TransferMessageRead]
     }
 
-    type DriverAuthPayload {
-        id: ID
-        name: String
-        email: String
-        token: String
-    }
+    # type DriverAuthPayload {
+    #     id: ID
+    #     name: String
+    #     email: String
+    #     token: String
+    # }
 
     input DriverCreateInput{               
         name: String!
@@ -120,10 +120,10 @@ const driverTypeDef = `#graphql
         all: Boolean
     }
 
-    input transferSignInput {
-        email: String!
-        password: String!
-    }
+    # input transferSignInput {
+    #     email: String!
+    #     password: String!
+    # }
 
     type Query{
         drivers(pagination: DriverPaginationInput!): DriverConnection!
@@ -134,7 +134,7 @@ const driverTypeDef = `#graphql
     type Mutation{
         createDriver(input: DriverCreateInput!, driverPhoto: [Upload], carPhotos: [Upload], stsPhoto: [Upload], ptsPhoto: [Upload], osagoPhoto: [Upload], licensePhoto: [Upload]): Driver!
         updateDriver(id: ID!, input: DriverUpdateInput): Driver!
-        transferSignIn(input: transferSignInput): DriverAuthPayload!
+        # transferSignIn(input: transferSignInput): DriverAuthPayload!
         updateDriverDocuments(id: ID!, input: DriverDocumentsUpdateInput!): Driver!
         deleteDriver(id: ID!): Driver!
     }
