@@ -20,29 +20,30 @@ async function resolveAuthSubject(identifier) {
   // ищем всех параллельно
   const [
     userByLogin,
-    // userByEmail,
+    userByEmail,
     driverByEmail,
     // airlinePersonalByEmail,   // если появится email
-    airlinePersonalByNumber
+    airlinePersonalByEmail
   ] = await Promise.all([
     prisma.user.findUnique({ where: { login: id } }),
-    // prisma.user.findUnique({ where: { email: id } }),
+    prisma.user.findUnique({ where: { email: id } }),
     prisma.driver.findUnique({ where: { email: id } }),
-    prisma.airlinePersonal.findFirst({ where: { number: id } })
+    prisma.airlinePersonal.findUnique({ where: { email: id } })
   ])
 
   const candidates = []
 
   if (userByLogin) candidates.push({ type: SUBJECT.USER, entity: userByLogin })
-  // else if (userByEmail) candidates.push({ type: SUBJECT.USER, entity: userByEmail })
+  else if (userByEmail)
+    candidates.push({ type: SUBJECT.USER, entity: userByEmail })
 
   if (driverByEmail)
     candidates.push({ type: SUBJECT.DRIVER, entity: driverByEmail })
 
-  if (airlinePersonalByNumber)
+  if (airlinePersonalByEmail)
     candidates.push({
       type: SUBJECT.AIRLINE_PERSONAL,
-      entity: airlinePersonalByNumber
+      entity: airlinePersonalByEmail
     })
 
   if (!candidates.length) {

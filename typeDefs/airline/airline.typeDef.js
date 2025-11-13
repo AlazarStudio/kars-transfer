@@ -34,6 +34,8 @@ type AirlineDepartment {
 type AirlinePersonal {
   id: ID!
   name: String
+  email: String
+  password: String
   number: String
   position: Position
   gender: String

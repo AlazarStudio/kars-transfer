@@ -178,6 +178,8 @@ model AirlinePersonal {
   id                  String                @id @default(auto()) @map("_id") @db.ObjectId
   name                String
   number              String?
+  email               String?
+  password            String?
   gender              String?
   married             Boolean?              @default(false)
   husband             AirlinePersonal?      @relation(name: "Marriage", fields: [husbandId], references: [id], onDelete: NoAction, onUpdate: NoAction)
