@@ -177,7 +177,7 @@ const driverResolver = {
         osagoPhoto: osagoPhotoPaths,
         licensePhoto: licensePhotoPaths
       }
-      
+
       const data = {
         name,
         phone,
@@ -330,6 +330,36 @@ const driverResolver = {
 
       return updatedDriver
     },
+
+    driverSignIn: async (_, { input }) => {
+      const { email, password } = input
+      // Ищем пользователя по логину
+      const user = await prisma.driver.findUnique({ where: { email } })
+      // Проверка корректности пароля с помощью argon2.verify
+      if (!user.active) {
+        throw new Error("User is not active")
+      }
+
+      if (!user || !(await argon2.verify(user.password, password))) {
+        throw new Error("Invalid credentials")
+      }
+
+      // Генерация токена доступа
+      const token = jwt.sign(
+        {
+          userId: user.id,
+          role: "DRIVER"
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "24h" }
+      )
+
+      return {
+        ...user,
+        token
+      }
+    },
+
     updateDriverDocuments: async (_, { id, documents }) => {
       const setDocs = await uploadFiles(documents)
       await prisma.driver.update({
