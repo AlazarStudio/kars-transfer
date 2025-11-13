@@ -28,7 +28,7 @@ async function resolveAuthSubject(identifier) {
     prisma.user.findUnique({ where: { login: id } }),
     prisma.user.findUnique({ where: { email: id } }),
     prisma.driver.findUnique({ where: { email: id } }),
-    prisma.airlinePersonal.findUnique({ where: { email: id } })
+    prisma.airlinePersonal.findFirst({ where: { email: id } }) // исправить на что-то уникальное
   ])
 
   const candidates = []
