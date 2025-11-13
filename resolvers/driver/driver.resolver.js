@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client"
 import argon2 from "argon2"
+import jwt from "jsonwebtoken"
 import GraphQLUpload from "graphql-upload/GraphQLUpload.mjs"
 // import { uploadFiles } from "../../exports/uploadFiles.js"
 import { uploadImage } from "../../exports/uploadImage.js"
@@ -197,8 +198,6 @@ const driverResolver = {
 
       pubsub.publish(DRIVER_CREATED, { driverCreated: newDriver })
 
-      newDriver.createdAt = dateFormatter(newDriver.createdAt)
-      newDriver.updatedAt = dateFormatter(newDriver.updatedAt)
       return newDriver
     },
 
