@@ -38,7 +38,7 @@ const transferTypeDef = `#graphql
         fromAddress: String! # адрес откуда
         toAddress: String! # адрес куда
         additionalPoints: [String!] # доп. точки
-        passengersCount: Int! # кол-во пассажиров
+        passengersCount: Int # кол-во пассажиров
 
         dispatcher: User   
         # dispatcherId: String 
@@ -48,7 +48,7 @@ const transferTypeDef = `#graphql
         # driverId: String
 
         # пассажиры (сотрудники авиакомпаний)
-        persons:[TransferPassenger!]!
+        persons:[AirlinePersonal!]!
 
         description: String # комментарий
         baggage: String # инфо о багаже
@@ -159,10 +159,10 @@ const transferTypeDef = `#graphql
     }
 
     input TransferInput{
-        fromAddress: String! # адрес откуда
-        toAddress: String! # адрес куда
+        fromAddress: String # адрес откуда
+        toAddress: String # адрес куда
         additionalPoints: [String!] # доп. точки
-        passengersCount: Int! # кол-во пассажиров
+        passengersCount: Int # кол-во пассажиров
 
         dispatcherId: String 
         # назначенный водитель (может быть пусто до назначения)
