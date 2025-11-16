@@ -186,6 +186,34 @@ const transferTypeDef = `#graphql
         status: TransferStatus
     }
 
+    input TransferUpdateInput{
+        fromAddress: String # адрес откуда
+        toAddress: String # адрес куда
+        additionalPoints: [String!] # доп. точки
+        passengersCount: Int # кол-во пассажиров
+
+        dispatcherId: String 
+        # назначенный водитель (может быть пусто до назначения)
+        driverId: String
+
+        # пассажиры (сотрудники авиакомпаний)
+        personsId: [ID]
+
+        description: String # комментарий
+        baggage: String # инфо о багаже
+     
+        scheduledPickupAt: Date # к скольки приехать к пассажиру
+        driverAssignmentAt: Date
+        orderAcceptanceAt: Date
+        arrivedToPassengerAt: Date
+        departedAt: Date
+        arrivedAt: Date
+        finishedAt: Date
+        travelDurationMinutes: Int # время в пути (мин)
+
+        status: TransferStatus
+    }
+
     input TransferPaginationInput{
         driverId: ID
         personId: ID
@@ -208,7 +236,7 @@ const transferTypeDef = `#graphql
 
     type Mutation {
         createTransfer(input: TransferInput!): Transfer!
-        updateTransfer(id: ID!, input: TransferInput!): Transfer!
+        updateTransfer(id: ID!, input: TransferUpdateInput!): Transfer!
     }
 
     type Subscription {
