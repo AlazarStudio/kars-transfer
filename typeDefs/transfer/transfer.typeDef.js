@@ -159,10 +159,10 @@ const transferTypeDef = `#graphql
     }
 
     input TransferInput{
-        fromAddress: String! # адрес откуда
-        toAddress: String! # адрес куда
+        fromAddress: String # адрес откуда
+        toAddress: String # адрес куда
         additionalPoints: [String!] # доп. точки
-        passengersCount: Int! # кол-во пассажиров
+        passengersCount: Int # кол-во пассажиров
 
         dispatcherId: String 
         # назначенный водитель (может быть пусто до назначения)
