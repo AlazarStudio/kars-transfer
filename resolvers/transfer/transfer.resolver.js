@@ -21,7 +21,7 @@ const transferResolver = {
             take: take
           })
 
-      // const moscowDates = []
+      const moscowDates = []
 
       // for (let transfer of transfers) {
       //   moscowDates.push({
@@ -40,6 +40,24 @@ const transferResolver = {
       // for (let i in transfers) {
       //   Object.assign(transfers[i], moscowDates[i])
       // }
+
+      const dateKeys = ["scheduledPickupAt", "driverAssignmentAt", "orderAcceptanceAt", 
+                        "arrivedToPassengerAt", "departedAt", "arrivedAt", 
+                        "finishedAt", "createdAt", "updatedAt"]
+
+
+      for (let transfer of transfers){
+        const moscowDate = {}
+        for (let key in transfer) {
+          if (dateKeys.includes(key)){
+            moscowDate[key] = dateFormatter(transfer[key])
+          }
+        }
+        // moscowDates.push(moscowDate)
+        Object.assign(transfer, moscowDate)
+
+      }
+  
       return { transfers, totalCount }
     },
     transfer: async (_, { id }) => {
@@ -49,7 +67,7 @@ const transferResolver = {
         include: { driver: true, persons: true }
       })
 
-      // const moscowDate = {} 
+      const moscowDate = {} 
       // moscowDate["scheduledPickupAt"] = dateFormatter(
       //   transfer["scheduledPickupAt"]
       // )
@@ -68,7 +86,17 @@ const transferResolver = {
       // moscowDate["createdAt"] = dateFormatter(transfer["createdAt"])
       // moscowDate["updatedAt"] = dateFormatter(transfer["updatedAt"])
 
-      // Object.assign(transfer, moscowDate)
+      const dateKeys = ["scheduledPickupAt", "driverAssignmentAt", "orderAcceptanceAt", 
+                        "arrivedToPassengerAt", "departedAt", "arrivedAt", 
+                        "finishedAt", "createdAt", "updatedAt"]
+
+      for (let key in transfer) {
+        if (dateKeys.includes(key)){
+          moscowDate[key] = dateFormatter(transfer[key])
+        }
+      }
+
+      Object.assign(transfer, moscowDate)
       return transfer
     }
   },

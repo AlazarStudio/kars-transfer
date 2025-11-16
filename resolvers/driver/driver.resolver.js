@@ -401,9 +401,12 @@ const driverResolver = {
   },
   Driver: {
     organization: async (parent, _) => {
-      return await prisma.organization.findUnique({
-        where: { id: parent.organizationId }
-      })
+      if (parent.organizationId){
+        return await prisma.organization.findUnique({
+          where: { id: parent.organizationId }
+        })
+      }
+      return null
     }
   }
 }
