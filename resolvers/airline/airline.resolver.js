@@ -58,7 +58,7 @@ const airlineResolver = {
           department: true,
           logs: true,
           // prices: true, // включаем тарифы
-          airportOnAirlinePrice: true
+          // airportOnAirlinePrice: true
         }
       })
     },
