@@ -186,27 +186,27 @@ const transferResolver = {
 
       pubsub.publish(TRANSFER_UPDATED, { transferUpdated: updatedTransfer })
 
-      const moscowDate = {}
+      // const moscowDate = {}
 
-      moscowDate["scheduledPickupAt"] = dateFormatter(
-        updatedTransfer["scheduledPickupAt"]
-      )
-      moscowDate["driverAssignmentAt"] = dateFormatter(
-        updatedTransfer["driverAssignmentAt"]
-      )
-      moscowDate["orderAcceptanceAt"] = dateFormatter(
-        updatedTransfer["orderAcceptanceAt"]
-      )
-      moscowDate["arrivedToPassengerAt"] = dateFormatter(
-        updatedTransfer["arrivedToPassengerAt"]
-      )
-      moscowDate["departedAt"] = dateFormatter(updatedTransfer["departedAt"])
-      moscowDate["arrivedAt"] = dateFormatter(updatedTransfer["arrivedAt"])
-      moscowDate["finishedAt"] = dateFormatter(updatedTransfer["finishedAt"])
-      moscowDate["createdAt"] = dateFormatter(updatedTransfer["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(updatedTransfer["updatedAt"])
+      // moscowDate["scheduledPickupAt"] = dateFormatter(
+      //   updatedTransfer["scheduledPickupAt"]
+      // )
+      // moscowDate["driverAssignmentAt"] = dateFormatter(
+      //   updatedTransfer["driverAssignmentAt"]
+      // )
+      // moscowDate["orderAcceptanceAt"] = dateFormatter(
+      //   updatedTransfer["orderAcceptanceAt"]
+      // )
+      // moscowDate["arrivedToPassengerAt"] = dateFormatter(
+      //   updatedTransfer["arrivedToPassengerAt"]
+      // )
+      // moscowDate["departedAt"] = dateFormatter(updatedTransfer["departedAt"])
+      // moscowDate["arrivedAt"] = dateFormatter(updatedTransfer["arrivedAt"])
+      // moscowDate["finishedAt"] = dateFormatter(updatedTransfer["finishedAt"])
+      // moscowDate["createdAt"] = dateFormatter(updatedTransfer["createdAt"])
+      // moscowDate["updatedAt"] = dateFormatter(updatedTransfer["updatedAt"])
 
-      Object.assign(updatedTransfer, moscowDate)
+      // Object.assign(updatedTransfer, moscowDate)
 
       return updatedTransfer
     }
