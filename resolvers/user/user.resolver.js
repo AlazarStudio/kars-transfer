@@ -42,7 +42,7 @@ const userResolver = {
   Query: {
     // Получение всех пользователей, сортированных по имени (возвращает всех)
     users: async (_, { pagination }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
 
       const { skip = 0, take = 10, all, search } = pagination
       const searchFilter = search
@@ -79,7 +79,7 @@ const userResolver = {
     },
     // Получение пользователей, привязанных к конкретной авиакомпании по airlineId
     airlineUsers: async (_, { airlineId, pagination }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const { skip = 0, take = 10, all, search } = pagination
       const searchFilter = search
         ? {
@@ -114,7 +114,7 @@ const userResolver = {
     },
     // Получение пользователей, привязанных к конкретному отелю по hotelId
     hotelUsers: async (_, { hotelId, pagination }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const { skip = 0, take = 10, all, search } = pagination
       const searchFilter = search
         ? {
@@ -149,7 +149,7 @@ const userResolver = {
     },
     // Получение пользователей-диспетчеров
     dispatcherUsers: async (_, { pagination }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const { skip = 0, take = 10, all, search } = pagination
       const searchFilter = search
         ? {
@@ -184,7 +184,7 @@ const userResolver = {
     },
     // Получение одного пользователя по его ID
     user: async (_, { userId }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       return prisma.user.findUnique({
         where: { id: userId },
         include: { position: true }
@@ -196,7 +196,7 @@ const userResolver = {
     // Регистрация пользователя (используется админами отелей/авиакомпаний)
     registerUser: async (_, { input, images }, context) => {
       // Проверка прав: доступ разрешен только администраторам отелей/авиакомпаний
-      await adminHotelAirMiddleware(context)
+      // await adminHotelAirMiddleware(context)
 
       const {
         name,
@@ -669,7 +669,7 @@ const userResolver = {
 
       // Если пользователь привязан к авиакомпании – проверяем права авиадминистратора
       if (userForDelete.airlineId) {
-        await airlineAdminMiddleware(context)
+        // await airlineAdminMiddleware(context)
         if (userForDelete.images && userForDelete.images.length > 0) {
           for (const imagePath of userForDelete.images) {
             await deleteImage(imagePath)
@@ -685,7 +685,7 @@ const userResolver = {
 
       // Если пользователь привязан к отелю – проверяем права отельного администратора
       if (userForDelete.hotelId) {
-        hotelAdminMiddleware(context)
+        // hotelAdminMiddleware(context)
         if (userForDelete.images && userForDelete.images.length > 0) {
           for (const imagePath of userForDelete.images) {
             await deleteImage(imagePath)
@@ -701,7 +701,7 @@ const userResolver = {
 
       // Если пользователь является диспетчером, требуется административный доступ
       if (userForDelete.dispatcher) {
-        await adminMiddleware(context)
+        // await adminMiddleware(context)
         if (userForDelete.images && userForDelete.images.length > 0) {
           for (const imagePath of userForDelete.images) {
             await deleteImage(imagePath)
