@@ -30,7 +30,7 @@ const airlineResolver = {
             include: {
               staff: true,
               department: true,
-              prices: true
+              // prices: true
             },
             orderBy: { name: "asc" }
           })
@@ -41,7 +41,7 @@ const airlineResolver = {
             include: {
               staff: true,
               department: true,
-              prices: true
+              // prices: true
             },
             orderBy: { name: "asc" }
           })
@@ -57,7 +57,7 @@ const airlineResolver = {
           staff: true,
           department: true,
           logs: true,
-          prices: true, // включаем тарифы
+          // prices: true, // включаем тарифы
           airportOnAirlinePrice: true
         }
       })
@@ -124,7 +124,7 @@ const airlineResolver = {
         include: {
           staff: true,
           department: true,
-          prices: true
+          // prices: true
         }
       })
 
@@ -427,7 +427,9 @@ const airlineResolver = {
 
         const airlineWithRelations = await prisma.airline.findUnique({
           where: { id },
-          include: { department: true, staff: true, prices: true }
+          include: { department: true, staff: true,
+            //  prices: true
+             }
         })
         await logAction({
           context,
@@ -562,16 +564,16 @@ const airlineResolver = {
       return { totalCount, totalPages, logs }
     },
     // Определяем резольвер для поля prices
-    prices: async (parent) => {
-      return await prisma.airlinePrice.findMany({
-        where: { airlineId: parent.id },
-        include: {
-          airports: {
-            include: { airport: true }
-          }
-        }
-      })
-    },
+    // prices: async (parent) => {
+    //   return await prisma.airlinePrice.findMany({
+    //     where: { airlineId: parent.id },
+    //     include: {
+    //       airports: {
+    //         include: { airport: true }
+    //       }
+    //     }
+    //   })
+    // },
     // При необходимости – резольвер для airportOnAirlinePrice
     airportOnAirlinePrice: async (parent) => {
       return await prisma.airportOnAirlinePrice.findMany({
