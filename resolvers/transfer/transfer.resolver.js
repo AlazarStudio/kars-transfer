@@ -25,15 +25,15 @@ const transferResolver = {
 
       for (let transfer of transfers) {
         moscowDates.push({
-          "scheduledPickupAt": dateFormatter(transfer["scheduledPickupAt"]),
-          "driverAssignmentAt": dateFormatter(transfer["driverAssignmentAt"]),
-          "orderAcceptanceAt": dateFormatter(transfer["orderAcceptanceAt"]),
-          "arrivedToPassengerAt": dateFormatter(transfer["arrivedToPassengerAt"]),
-          "departedAt": dateFormatter(transfer["departedAt"]),
-          "arrivedAt": dateFormatter(transfer["arrivedAt"]),
-          "finishedAt": dateFormatter(transfer["finishedAt"]),
-          "createdAt": dateFormatter(transfer["createdAt"]),
-          "updatedAt": dateFormatter(transfer["updatedAt"]),
+          scheduledPickupAt: dateFormatter(transfer["scheduledPickupAt"]),
+          driverAssignmentAt: dateFormatter(transfer["driverAssignmentAt"]),
+          orderAcceptanceAt: dateFormatter(transfer["orderAcceptanceAt"]),
+          arrivedToPassengerAt: dateFormatter(transfer["arrivedToPassengerAt"]),
+          departedAt: dateFormatter(transfer["departedAt"]),
+          arrivedAt: dateFormatter(transfer["arrivedAt"]),
+          finishedAt: dateFormatter(transfer["finishedAt"]),
+          createdAt: dateFormatter(transfer["createdAt"]),
+          updatedAt: dateFormatter(transfer["updatedAt"])
         })
       }
 
@@ -50,10 +50,18 @@ const transferResolver = {
       })
 
       const moscowDate = {} // Создаем объект для записи времени в московском часовом поясе
-      moscowDate["scheduledPickupAt"] = dateFormatter(transfer["scheduledPickupAt"])
-      moscowDate["driverAssignmentAt"] = dateFormatter(transfer["driverAssignmentAt"])
-      moscowDate["orderAcceptanceAt"] = dateFormatter(transfer["orderAcceptanceAt"])
-      moscowDate["arrivedToPassengerAt"] = dateFormatter(transfer["arrivedToPassengerAt"])
+      moscowDate["scheduledPickupAt"] = dateFormatter(
+        transfer["scheduledPickupAt"]
+      )
+      moscowDate["driverAssignmentAt"] = dateFormatter(
+        transfer["driverAssignmentAt"]
+      )
+      moscowDate["orderAcceptanceAt"] = dateFormatter(
+        transfer["orderAcceptanceAt"]
+      )
+      moscowDate["arrivedToPassengerAt"] = dateFormatter(
+        transfer["arrivedToPassengerAt"]
+      )
       moscowDate["departedAt"] = dateFormatter(transfer["departedAt"])
       moscowDate["arrivedAt"] = dateFormatter(transfer["arrivedAt"])
       moscowDate["finishedAt"] = dateFormatter(transfer["finishedAt"])
@@ -66,41 +74,75 @@ const transferResolver = {
   },
   Mutation: {
     createTransfer: async (_, { input }) => {
-      const Data = {}
-      
+      const {
+        dispatcherId,
+        driverId,
+        personsId, // [ID] из GraphQL
+        ...restInput
+      } = input
 
-      for (let key in input) {
-        if (
-          [
-            "scheduledPickupAt",
-            "driverAssignmentAt",
-            "orderAcceptanceAt",
-            "arrivedToPassengerAt",
-            "departedAt",
-            "arrivedAt",
-            "finishedAt",
-            "createdAt",
-            "updatedAt"
-          ].includes(key)
-        ) {
-          Data[key] = new Date(input[key])
+      const dateFields = [
+        "scheduledPickupAt",
+        "driverAssignmentAt",
+        "orderAcceptanceAt",
+        "arrivedToPassengerAt",
+        "departedAt",
+        "arrivedAt",
+        "finishedAt",
+        "createdAt",
+        "updatedAt"
+      ]
+
+      const data = {}
+
+      // обычные поля + даты
+      for (let key in restInput) {
+        if (restInput[key] === undefined || restInput[key] === null) continue
+
+        if (dateFields.includes(key)) {
+          data[key] = new Date(restInput[key])
         } else {
-          Data[key] = input[key]
+          data[key] = restInput[key]
+        }
+      }
+
+      // связи dispatcher/driver
+      if (dispatcherId) {
+        data.dispatcher = { connect: { id: dispatcherId } }
+      }
+      if (driverId) {
+        data.driver = { connect: { id: driverId } }
+      }
+
+      // ПАССАЖИРЫ: personsId -> persons.create(...)
+      if (Array.isArray(personsId) && personsId.length) {
+        data.persons = {
+          create: personsId.map((personalId) => ({
+            personal: { connect: { id: personalId } } // TransferPassenger.personalId
+          }))
         }
       }
 
       const newTransfer = await prisma.transfer.create({
-        data: Data
+        data
+        // если нужно сразу вернуть связанные сущности:
+        // include: { driver: true, dispatcher: true, persons: { include: { personal: true } } }
       })
 
-      pubsub.publish(TRANSFER_CREATED, { transferCreated: newTransfer })
-
+      // дальше твой форматтер дат
       const moscowDate = {}
-
-      moscowDate["scheduledPickupAt"] = dateFormatter(newTransfer["scheduledPickupAt"])
-      moscowDate["driverAssignmentAt"] = dateFormatter(newTransfer["driverAssignmentAt"])
-      moscowDate["orderAcceptanceAt"] = dateFormatter(newTransfer["orderAcceptanceAt"])
-      moscowDate["arrivedToPassengerAt"] = dateFormatter(newTransfer["arrivedToPassengerAt"])
+      moscowDate["scheduledPickupAt"] = dateFormatter(
+        newTransfer["scheduledPickupAt"]
+      )
+      moscowDate["driverAssignmentAt"] = dateFormatter(
+        newTransfer["driverAssignmentAt"]
+      )
+      moscowDate["orderAcceptanceAt"] = dateFormatter(
+        newTransfer["orderAcceptanceAt"]
+      )
+      moscowDate["arrivedToPassengerAt"] = dateFormatter(
+        newTransfer["arrivedToPassengerAt"]
+      )
       moscowDate["departedAt"] = dateFormatter(newTransfer["departedAt"])
       moscowDate["arrivedAt"] = dateFormatter(newTransfer["arrivedAt"])
       moscowDate["finishedAt"] = dateFormatter(newTransfer["finishedAt"])
@@ -109,27 +151,30 @@ const transferResolver = {
 
       Object.assign(newTransfer, moscowDate)
 
+      pubsub.publish(TRANSFER_CREATED, { transferCreated: newTransfer })
+
       return newTransfer
     },
     updateTransfer: async (_, { id, input }) => {
       const updatedData = {}
 
       for (let key in input) {
-        if ( input[key] !== undefined ){
-          if ( [
-            "scheduledPickupAt",
-            "driverAssignmentAt",
-            "orderAcceptanceAt",
-            "arrivedToPassengerAt",
-            "departedAt",
-            "arrivedAt",
-            "finishedAt",
-            "createdAt",
-            "updatedAt"
-          ].includes(key) ){
+        if (input[key] !== undefined) {
+          if (
+            [
+              "scheduledPickupAt",
+              "driverAssignmentAt",
+              "orderAcceptanceAt",
+              "arrivedToPassengerAt",
+              "departedAt",
+              "arrivedAt",
+              "finishedAt",
+              "createdAt",
+              "updatedAt"
+            ].includes(key)
+          ) {
             updatedData[key] = new Date(input[key])
-          }
-          else {
+          } else {
             updatedData[key] = input[key]
           }
         }
@@ -144,10 +189,18 @@ const transferResolver = {
 
       const moscowDate = {}
 
-      moscowDate["scheduledPickupAt"] = dateFormatter(updatedTransfer["scheduledPickupAt"])
-      moscowDate["driverAssignmentAt"] = dateFormatter(updatedTransfer["driverAssignmentAt"])
-      moscowDate["orderAcceptanceAt"] = dateFormatter(updatedTransfer["orderAcceptanceAt"])
-      moscowDate["arrivedToPassengerAt"] = dateFormatter(updatedTransfer["arrivedToPassengerAt"])
+      moscowDate["scheduledPickupAt"] = dateFormatter(
+        updatedTransfer["scheduledPickupAt"]
+      )
+      moscowDate["driverAssignmentAt"] = dateFormatter(
+        updatedTransfer["driverAssignmentAt"]
+      )
+      moscowDate["orderAcceptanceAt"] = dateFormatter(
+        updatedTransfer["orderAcceptanceAt"]
+      )
+      moscowDate["arrivedToPassengerAt"] = dateFormatter(
+        updatedTransfer["arrivedToPassengerAt"]
+      )
       moscowDate["departedAt"] = dateFormatter(updatedTransfer["departedAt"])
       moscowDate["arrivedAt"] = dateFormatter(updatedTransfer["arrivedAt"])
       moscowDate["finishedAt"] = dateFormatter(updatedTransfer["finishedAt"])
@@ -157,7 +210,8 @@ const transferResolver = {
       Object.assign(updatedTransfer, moscowDate)
 
       return updatedTransfer
-    }},
+    }
+  },
   Transfer: {
     dispatcher: async (parent, _) => {
       return await prisma.dispatcher.findUnique({
