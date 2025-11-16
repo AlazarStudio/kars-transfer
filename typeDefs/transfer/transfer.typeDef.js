@@ -101,7 +101,6 @@ const transferTypeDef = `#graphql
     }
 
     
-
     type TransferReview{
         id:         ID!   
         transfer:   Transfer! 
@@ -237,6 +236,7 @@ const transferTypeDef = `#graphql
     type Mutation {
         createTransfer(input: TransferInput!): Transfer!
         updateTransfer(id: ID!, input: TransferUpdateInput!): Transfer!
+        
     }
 
     type Subscription {

@@ -137,6 +137,8 @@ const driverTypeDef = `#graphql
         # transferSignIn(input: transferSignInput): DriverAuthPayload!
         updateDriverDocuments(id: ID!, input: DriverDocumentsUpdateInput!): Driver!
         deleteDriver(id: ID!): Driver!
+
+        #Создать typeDef И resolvers для transferMessage
     }
 
     type Subscription {

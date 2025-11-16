@@ -240,38 +240,53 @@ const transferResolver = {
   },
   Transfer: {
     dispatcher: async (parent, _) => {
-      return await prisma.dispatcher.findUnique({
-        where: { id: parent.dispatcherId }
-      })
+      if (parent.dispatcherId){
+        return await prisma.user.findUnique({
+          where: { id: parent.dispatcherId, dispatcher: true }
+        })
+      }
+      return null
     },
     driver: async (parent, _) => {
-      const driver = await prisma.driver.findUnique({
-        where: { id: parent.driverId }
-      })
-
-      // const moscowDate = {}
-
-      // moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
-      // moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
-
-      // Object.assign(driver, moscowDate)
-
-      return driver
+      if (parent.id){
+        const driver = await prisma.driver.findUnique({
+          where: { id: parent.driverId }
+        })
+  
+        // const moscowDate = {}
+  
+        // moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+        // moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
+  
+        // Object.assign(driver, moscowDate)
+  
+        return driver
+      }
+      return null
     },
     persons: async (parent, _) => {
-      return await prisma.transferPassenger.findMany({
-        where: { transferId: parent.id }
-      })
+      if (parent.id){
+        return await prisma.transferPassenger.findMany({
+          where: { transferId: parent.id }
+        })
+      }
+      return null
     },
     chats: async (parent, _) => {
-      return await prisma.transferChat.findMany({
-        where: { transferId: parent.id }
-      })
+      if (parent.id){
+        return await prisma.transferChat.findMany({
+          where: { transferId: parent.id }
+        })
+      }
+        return null
     },
     reviews: async (parent, _) => {
-      return await prisma.reviews.findMany({
-        where: { transferId: parent.id }
-      })
+      if (parent.id){
+        return await prisma.transferReview.findMany({
+          where: { transferId: parent.id }
+        })
+      }
+      return null
     }
   }
 }

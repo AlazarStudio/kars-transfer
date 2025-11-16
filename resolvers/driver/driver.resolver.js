@@ -407,6 +407,14 @@ const driverResolver = {
         })
       }
       return null
+    },
+    transferMessages: async (parent, _) => {
+      if (parent.id) {
+        return await prisma.transferMessage.findMany({
+          where: { senderDriverId: parent.id }
+        })
+      }
+      return null
     }
   }
 }
