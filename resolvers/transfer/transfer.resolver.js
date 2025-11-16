@@ -49,26 +49,26 @@ const transferResolver = {
         include: { driver: true, persons: true }
       })
 
-      const moscowDate = {} // Создаем объект для записи времени в московском часовом поясе
-      moscowDate["scheduledPickupAt"] = dateFormatter(
-        transfer["scheduledPickupAt"]
-      )
-      moscowDate["driverAssignmentAt"] = dateFormatter(
-        transfer["driverAssignmentAt"]
-      )
-      moscowDate["orderAcceptanceAt"] = dateFormatter(
-        transfer["orderAcceptanceAt"]
-      )
-      moscowDate["arrivedToPassengerAt"] = dateFormatter(
-        transfer["arrivedToPassengerAt"]
-      )
-      moscowDate["departedAt"] = dateFormatter(transfer["departedAt"])
-      moscowDate["arrivedAt"] = dateFormatter(transfer["arrivedAt"])
-      moscowDate["finishedAt"] = dateFormatter(transfer["finishedAt"])
-      moscowDate["createdAt"] = dateFormatter(transfer["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(transfer["updatedAt"])
+      // const moscowDate = {} 
+      // moscowDate["scheduledPickupAt"] = dateFormatter(
+      //   transfer["scheduledPickupAt"]
+      // )
+      // moscowDate["driverAssignmentAt"] = dateFormatter(
+      //   transfer["driverAssignmentAt"]
+      // )
+      // moscowDate["orderAcceptanceAt"] = dateFormatter(
+      //   transfer["orderAcceptanceAt"]
+      // )
+      // moscowDate["arrivedToPassengerAt"] = dateFormatter(
+      //   transfer["arrivedToPassengerAt"]
+      // )
+      // moscowDate["departedAt"] = dateFormatter(transfer["departedAt"])
+      // moscowDate["arrivedAt"] = dateFormatter(transfer["arrivedAt"])
+      // moscowDate["finishedAt"] = dateFormatter(transfer["finishedAt"])
+      // moscowDate["createdAt"] = dateFormatter(transfer["createdAt"])
+      // moscowDate["updatedAt"] = dateFormatter(transfer["updatedAt"])
 
-      Object.assign(transfer, moscowDate)
+      // Object.assign(transfer, moscowDate)
       return transfer
     }
   },
@@ -221,12 +221,12 @@ const transferResolver = {
         where: { id: parent.driverId }
       })
 
-      const moscowDate = {}
+      // const moscowDate = {}
 
-      moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
+      // moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+      // moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
 
-      Object.assign(driver, moscowDate)
+      // Object.assign(driver, moscowDate)
 
       return driver
     },
