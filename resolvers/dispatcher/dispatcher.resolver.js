@@ -17,7 +17,7 @@ const prisma = new PrismaClient()
 const dispatcherResolver = {
   Query: {
     getAllCompany: async (_, {}, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
 
       return await prisma.company.findMany({
         include: {
@@ -26,7 +26,7 @@ const dispatcherResolver = {
       })
     },
     getCompany: async (_, { id }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
 
       const company = await prisma.company.findUnique({
         where: { id },
@@ -55,7 +55,7 @@ const dispatcherResolver = {
     //   })
     // },
     getAllPriceCategory: async (_, { filter }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
 
       const { companyId, airlineId, hotelId } = filter || {}
 
@@ -76,7 +76,7 @@ const dispatcherResolver = {
       })
     },
     getPriceCategory: async (_, { id }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       return await prisma.priceCategory.findUnique({
         where: { id },
         include: {
@@ -88,7 +88,7 @@ const dispatcherResolver = {
       })
     },
     getAllNotifications: async (_, { pagination }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const { user } = context
       const { skip, take, type, status } = pagination
       let filter
@@ -140,37 +140,37 @@ const dispatcherResolver = {
       return { totalPages, totalCount, notifications }
     },
     getAllPositions: async (_, {}, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       return await prisma.position.findMany({})
     },
     getAirlinePositions: async (_, {}, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       return await prisma.position.findMany({ where: { separator: "airline" } })
     },
     getAirlineUserPositions: async (_, {}, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       return await prisma.position.findMany({
         where: { separator: "airlineUser" }
       })
     },
     getHotelPositions: async (_, {}, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       return await prisma.position.findMany({ where: { separator: "hotel" } })
     },
     getDispatcherPositions: async (_, {}, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       return await prisma.position.findMany({
         where: { separator: "dispatcher" }
       })
     },
     getPosition: async (_, { id }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       return await prisma.position.findUnique({ where: { id } })
     }
   },
   Mutation: {
     createCompany: async (_, { input }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const company = await prisma.company.create({
         data: { ...input }
       })
@@ -180,7 +180,7 @@ const dispatcherResolver = {
       return company
     },
     updateCompany: async (_, { input }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const { id, ...data } = input // Убираем id из data
       const company = await prisma.company.update({
         where: { id },
@@ -192,7 +192,7 @@ const dispatcherResolver = {
       return company
     },
     createPriceCategory: async (_, { input }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
 
       const data = {
         airlineId: input.airlineId || undefined,
@@ -226,7 +226,7 @@ const dispatcherResolver = {
       return priceCategory
     },
     updatePriceCategory: async (_, { input }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
 
       const { id, airlineId, hotelId, companyId, name, airlinePrices } = input
 
@@ -270,7 +270,7 @@ const dispatcherResolver = {
       return priceCategory
     },
     createPosition: async (_, { input }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const { name, separator } = input
       const position = await prisma.position.create({
         data: {
@@ -282,7 +282,7 @@ const dispatcherResolver = {
       return position
     },
     updatePosition: async (_, { input }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const { name } = input
       const position = await prisma.position.update({
         where: { id: input.id },

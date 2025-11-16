@@ -74,7 +74,7 @@ const globalResolver = {
   Upload: GraphQLUpload,
   Mutation: {
     singleUpload: async (_, { file }, context) => {
-      await allMiddleware(context)
+      // await allMiddleware(context)
       const { createReadStream, filename, mimetype, encoding } = await file
       // Определяем путь для сохранения файла в папке uploads
       const uploadPath = path.join(process.cwd(), "uploads", filename)
