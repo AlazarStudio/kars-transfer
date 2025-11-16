@@ -129,27 +129,26 @@ const transferResolver = {
         // include: { driver: true, dispatcher: true, persons: { include: { personal: true } } }
       })
 
-      // дальше твой форматтер дат
-      const moscowDate = {}
-      moscowDate["scheduledPickupAt"] = dateFormatter(
-        newTransfer["scheduledPickupAt"]
-      )
-      moscowDate["driverAssignmentAt"] = dateFormatter(
-        newTransfer["driverAssignmentAt"]
-      )
-      moscowDate["orderAcceptanceAt"] = dateFormatter(
-        newTransfer["orderAcceptanceAt"]
-      )
-      moscowDate["arrivedToPassengerAt"] = dateFormatter(
-        newTransfer["arrivedToPassengerAt"]
-      )
-      moscowDate["departedAt"] = dateFormatter(newTransfer["departedAt"])
-      moscowDate["arrivedAt"] = dateFormatter(newTransfer["arrivedAt"])
-      moscowDate["finishedAt"] = dateFormatter(newTransfer["finishedAt"])
-      moscowDate["createdAt"] = dateFormatter(newTransfer["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(newTransfer["updatedAt"])
+      // const moscowDate = {}
+      // moscowDate["scheduledPickupAt"] = dateFormatter(
+      //   newTransfer["scheduledPickupAt"]
+      // )
+      // moscowDate["driverAssignmentAt"] = dateFormatter(
+      //   newTransfer["driverAssignmentAt"]
+      // )
+      // moscowDate["orderAcceptanceAt"] = dateFormatter(
+      //   newTransfer["orderAcceptanceAt"]
+      // )
+      // moscowDate["arrivedToPassengerAt"] = dateFormatter(
+      //   newTransfer["arrivedToPassengerAt"]
+      // )
+      // moscowDate["departedAt"] = dateFormatter(newTransfer["departedAt"])
+      // moscowDate["arrivedAt"] = dateFormatter(newTransfer["arrivedAt"])
+      // moscowDate["finishedAt"] = dateFormatter(newTransfer["finishedAt"])
+      // moscowDate["createdAt"] = dateFormatter(newTransfer["createdAt"])
+      // moscowDate["updatedAt"] = dateFormatter(newTransfer["updatedAt"])
 
-      Object.assign(newTransfer, moscowDate)
+      // Object.assign(newTransfer, moscowDate)
 
       pubsub.publish(TRANSFER_CREATED, { transferCreated: newTransfer })
 
