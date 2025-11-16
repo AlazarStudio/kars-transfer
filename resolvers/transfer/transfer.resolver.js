@@ -21,25 +21,25 @@ const transferResolver = {
             take: take
           })
 
-      const moscowDates = []
+      // const moscowDates = []
 
-      for (let transfer of transfers) {
-        moscowDates.push({
-          scheduledPickupAt: dateFormatter(transfer["scheduledPickupAt"]),
-          driverAssignmentAt: dateFormatter(transfer["driverAssignmentAt"]),
-          orderAcceptanceAt: dateFormatter(transfer["orderAcceptanceAt"]),
-          arrivedToPassengerAt: dateFormatter(transfer["arrivedToPassengerAt"]),
-          departedAt: dateFormatter(transfer["departedAt"]),
-          arrivedAt: dateFormatter(transfer["arrivedAt"]),
-          finishedAt: dateFormatter(transfer["finishedAt"]),
-          createdAt: dateFormatter(transfer["createdAt"]),
-          updatedAt: dateFormatter(transfer["updatedAt"])
-        })
-      }
+      // for (let transfer of transfers) {
+      //   moscowDates.push({
+      //     scheduledPickupAt: dateFormatter(transfer["scheduledPickupAt"]),
+      //     driverAssignmentAt: dateFormatter(transfer["driverAssignmentAt"]),
+      //     orderAcceptanceAt: dateFormatter(transfer["orderAcceptanceAt"]),
+      //     arrivedToPassengerAt: dateFormatter(transfer["arrivedToPassengerAt"]),
+      //     departedAt: dateFormatter(transfer["departedAt"]),
+      //     arrivedAt: dateFormatter(transfer["arrivedAt"]),
+      //     finishedAt: dateFormatter(transfer["finishedAt"]),
+      //     createdAt: dateFormatter(transfer["createdAt"]),
+      //     updatedAt: dateFormatter(transfer["updatedAt"])
+      //   })
+      // }
 
-      for (let i in transfers) {
-        Object.assign(transfers[i], moscowDates[i])
-      }
+      // for (let i in transfers) {
+      //   Object.assign(transfers[i], moscowDates[i])
+      // }
       return { transfers, totalCount }
     },
     transfer: async (_, { id }) => {
@@ -77,7 +77,7 @@ const transferResolver = {
       const {
         dispatcherId,
         driverId,
-        personsId, // [ID] из GraphQL
+        personsId,
         ...restInput
       } = input
 
@@ -95,7 +95,6 @@ const transferResolver = {
 
       const data = {}
 
-      // обычные поля + даты
       for (let key in restInput) {
         if (restInput[key] === undefined || restInput[key] === null) continue
 
