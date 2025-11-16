@@ -8,7 +8,7 @@ type Airport {
 
 type Query {
   airports: [Airport!]!
-  airport(id:ID): Airport
+  airport(airportId:ID): Airport
   airportCity(city: String): [Airport!]!
 }
 
