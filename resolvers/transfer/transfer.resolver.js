@@ -167,6 +167,8 @@ const transferResolver = {
         data.driver = { connect: { id: driverId } }
       }
 
+      data.airline = { connect: { id: finalAirlineId } }
+
       // ПАССАЖИРЫ: personsId -> persons.create(...)
       if (Array.isArray(personsId) && personsId.length) {
         data.persons = {
