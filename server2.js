@@ -176,7 +176,6 @@ app.use(
             position: true,
             airlineId: true,
             airlineDepartmentId: true,
-            hotelId: true,
             dispatcher: true,
             support: true
           }
