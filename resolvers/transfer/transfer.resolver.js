@@ -12,8 +12,6 @@ const prisma = new PrismaClient()
 const transferResolver = {
   Query: {
     transfers: async (_, { pagination }, context) => {
-      
-
       const { skip, take, all } = pagination || {}
       const totalCount = await prisma.transfer.count() // добавить позже фильтрацию
       const transfers = all
@@ -118,7 +116,13 @@ const transferResolver = {
   },
   Mutation: {
     createTransfer: async (_, { input }, context) => {
-      const { dispatcherId, driverId, personsId, ...restInput } = input
+      const {
+        dispatcherId,
+        driverId,
+        personsId,
+        airlineId: inputAirlineId,
+        ...restInput
+      } = input
 
       const dateFields = [
         "scheduledPickupAt",
@@ -133,6 +137,17 @@ const transferResolver = {
       ]
 
       const data = {}
+
+      const ctxAirlineId = context.user?.airlineId || null
+      let finalAirlineId = ctxAirlineId || inputAirlineId || null
+
+      if (ctxAirlineId && inputAirlineId && ctxAirlineId !== inputAirlineId) {
+        throw new Error("Forbidden: airlineId mismatch with current user")
+      }
+
+      if (!finalAirlineId) {
+        throw new Error("airlineId is required")
+      }
 
       for (let key in restInput) {
         if (restInput[key] === undefined || restInput[key] === null) continue
