@@ -12,10 +12,7 @@ const prisma = new PrismaClient()
 const transferResolver = {
   Query: {
     transfers: async (_, { pagination }, context) => {
-      console.log(
-        "context " + context,
-        "context str " + JSON.stringify(context)
-      )
+      
 
       const { skip, take, all } = pagination || {}
       const totalCount = await prisma.transfer.count() // добавить позже фильтрацию
