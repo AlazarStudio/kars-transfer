@@ -12,6 +12,11 @@ const organizationTypeDef = `#graphql
         information: InformationInput
     }
 
+    input UpdateOrganizationInput{
+            name: String
+            information: InformationInput
+        }
+
     type Query {
         organizations: [Organization!]!
         organization(id: ID!): Organization 
@@ -19,7 +24,7 @@ const organizationTypeDef = `#graphql
 
     type Mutation {
         createOrganization(input: OrganizationInput): Organization!
-        updateOrganization(id: ID!, input: OrganizationInput): Organization!
+        updateOrganization(id: ID!, input: UpdateOrganizationInput): Organization!
         deleteOrganization(id: ID!): Organization!
         #добавить Update Delete
     }

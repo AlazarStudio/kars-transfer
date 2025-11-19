@@ -89,34 +89,34 @@ const airlineResolver = {
 
       // Для цен теперь ожидаем массив тарифных договоров
       // Если input.prices не переданы, можно установить пустой массив
-      const airlinePriceData = input.prices || []
+      // const airlinePriceData = input.prices || []
 
-      let imagePaths = []
-      if (images && images.length > 0) {
-        for (const image of images) {
-          const uploadedPath = await uploadImage(image)
-          imagePaths.push(uploadedPath)
-        }
-      }
+      // let imagePaths = []
+      // if (images && images.length > 0) {
+      //   for (const image of images) {
+      //     const uploadedPath = await uploadImage(image)
+      //     imagePaths.push(uploadedPath)
+      //   }
+      // }
 
       // Основные данные
       const data = {
         ...input,
         // mealPrice: input.mealPrice || defaultMealPrice,
-        images: imagePaths,
+        // images: imagePaths,
         // Используем nested create для создания тарифных договоров
-        prices: {
-          create: airlinePriceData.map((priceInput) => ({
-            prices: priceInput.prices,
-            airports: {
-              create: priceInput.airportIds
-                ? priceInput.airportIds.map((airportId) => ({
-                    airport: { connect: { id: airportId } }
-                  }))
-                : []
-            }
-          }))
-        }
+        // prices: {
+        //   create: airlinePriceData.map((priceInput) => ({
+        //     prices: priceInput.prices,
+        //     airports: {
+        //       create: priceInput.airportIds
+        //         ? priceInput.airportIds.map((airportId) => ({
+        //             airport: { connect: { id: airportId } }
+        //           }))
+        //         : []
+        //     }
+        //   }))
+        // }
       }
 
       const createdAirline = await prisma.airline.create({
@@ -128,13 +128,14 @@ const airlineResolver = {
         }
       })
 
-      await logAction({
-        context,
-        action: "create_airline",
-        description: `Пользователь <span style='color:#545873'>${user.name}</span> добавил авиакомпанию <span style='color:#545873'>${createdAirline.name}</span>`,
-        airlineName: createdAirline.name,
-        airlineId: createdAirline.id
-      })
+
+      // await logAction({
+      //   context,
+      //   action: "create_airline",
+      //   description: `Пользователь <span style='color:#545873'>${user.name}</span> добавил авиакомпанию <span style='color:#545873'>${createdAirline.name}</span>`,
+      //   airlineName: createdAirline.name,
+      //   airlineId: createdAirline.id
+      // })
       pubsub.publish(AIRLINE_CREATED, { airlineCreated: createdAirline })
       return createdAirline
     },
@@ -440,6 +441,7 @@ const airlineResolver = {
         pubsub.publish(AIRLINE_UPDATED, {
           airlineUpdated: airlineWithRelations
         })
+  
         return airlineWithRelations
       } catch (error) {
         const timestamp = new Date().toISOString()
