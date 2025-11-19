@@ -41,23 +41,29 @@ const transferResolver = {
       //   Object.assign(transfers[i], moscowDates[i])
       // }
 
-      const dateKeys = ["scheduledPickupAt", "driverAssignmentAt", "orderAcceptanceAt", 
-                        "arrivedToPassengerAt", "departedAt", "arrivedAt", 
-                        "finishedAt", "createdAt", "updatedAt"]
+      const dateKeys = [
+        "scheduledPickupAt",
+        "driverAssignmentAt",
+        "orderAcceptanceAt",
+        "arrivedToPassengerAt",
+        "departedAt",
+        "arrivedAt",
+        "finishedAt",
+        "createdAt",
+        "updatedAt"
+      ]
 
-
-      for (let transfer of transfers){
+      for (let transfer of transfers) {
         const moscowDate = {}
         for (let key in transfer) {
-          if (dateKeys.includes(key)){
+          if (dateKeys.includes(key)) {
             moscowDate[key] = dateFormatter(transfer[key])
           }
         }
         // moscowDates.push(moscowDate)
         Object.assign(transfer, moscowDate)
-
       }
-  
+
       return { transfers, totalCount }
     },
     transfer: async (_, { id }) => {
@@ -67,7 +73,7 @@ const transferResolver = {
         include: { driver: true, persons: true }
       })
 
-      const moscowDate = {} 
+      const moscowDate = {}
       // moscowDate["scheduledPickupAt"] = dateFormatter(
       //   transfer["scheduledPickupAt"]
       // )
@@ -86,12 +92,20 @@ const transferResolver = {
       // moscowDate["createdAt"] = dateFormatter(transfer["createdAt"])
       // moscowDate["updatedAt"] = dateFormatter(transfer["updatedAt"])
 
-      const dateKeys = ["scheduledPickupAt", "driverAssignmentAt", "orderAcceptanceAt", 
-                        "arrivedToPassengerAt", "departedAt", "arrivedAt", 
-                        "finishedAt", "createdAt", "updatedAt"]
+      const dateKeys = [
+        "scheduledPickupAt",
+        "driverAssignmentAt",
+        "orderAcceptanceAt",
+        "arrivedToPassengerAt",
+        "departedAt",
+        "arrivedAt",
+        "finishedAt",
+        "createdAt",
+        "updatedAt"
+      ]
 
       for (let key in transfer) {
-        if (dateKeys.includes(key)){
+        if (dateKeys.includes(key)) {
           moscowDate[key] = dateFormatter(transfer[key])
         }
       }
@@ -102,12 +116,7 @@ const transferResolver = {
   },
   Mutation: {
     createTransfer: async (_, { input }) => {
-      const {
-        dispatcherId,
-        driverId,
-        personsId,
-        ...restInput
-      } = input
+      const { dispatcherId, driverId, personsId, ...restInput } = input
 
       const dateFields = [
         "scheduledPickupAt",
@@ -240,7 +249,7 @@ const transferResolver = {
   },
   Transfer: {
     dispatcher: async (parent, _) => {
-      if (parent.dispatcherId){
+      if (parent.dispatcherId) {
         return await prisma.user.findUnique({
           where: { id: parent.dispatcherId, dispatcher: true }
         })
@@ -248,40 +257,42 @@ const transferResolver = {
       return null
     },
     driver: async (parent, _) => {
-      if (parent.id){
+      if (parent.id) {
         const driver = await prisma.driver.findUnique({
           where: { id: parent.driverId }
         })
-  
+
         // const moscowDate = {}
-  
+
         // moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
         // moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
-  
+
         // Object.assign(driver, moscowDate)
-  
+
         return driver
       }
       return null
     },
     persons: async (parent, _) => {
-      if (parent.id){
-        return await prisma.transferPassenger.findMany({
-          where: { transferId: parent.id }, include: { personal: true }
-        })
-      }
-      return null
+      if (!parent.id) return []
+
+      const passengers = await prisma.transferPassenger.findMany({
+        where: { transferId: parent.id },
+        include: { personal: true }
+      })
+
+      return passengers.map((p) => p.personal).filter(Boolean)
     },
     chats: async (parent, _) => {
-      if (parent.id){
+      if (parent.id) {
         return await prisma.transferChat.findMany({
           where: { transferId: parent.id }
         })
       }
-        return null
+      return null
     },
     reviews: async (parent, _) => {
-      if (parent.id){
+      if (parent.id) {
         return await prisma.transferReview.findMany({
           where: { transferId: parent.id }
         })
