@@ -115,8 +115,13 @@ const transferResolver = {
     }
   },
   Mutation: {
-    createTransfer: async (_, { input }) => {
+    createTransfer: async (_, { input }, context) => {
       const { dispatcherId, driverId, personsId, ...restInput } = input
+
+      console.log(
+        "context " + context,
+        "context str " + JSON.stringify(context)
+      )
 
       const dateFields = [
         "scheduledPickupAt",
@@ -257,7 +262,7 @@ const transferResolver = {
       return null
     },
     driver: async (parent, _) => {
-      if (parent.driverId){
+      if (parent.driverId) {
         const driver = await prisma.driver.findUnique({
           where: { id: parent.driverId }
         })
@@ -299,7 +304,7 @@ const transferResolver = {
       }
       return null
     },
-    airline: async(parent, _) => {
+    airline: async (parent, _) => {
       if (parent.airlineId) {
         return await prisma.airline.findUnique({
           where: { id: parent.airlineId }

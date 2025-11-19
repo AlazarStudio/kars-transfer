@@ -13,7 +13,7 @@ import { makeExecutableSchema } from "@graphql-tools/schema"
 import mergedTypeDefs from "./typeDefs/typedefs.js"
 import mergedResolvers from "./resolvers/resolvers.js"
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs"
-// import { startArchivingJob } from "./utils/request/cronTasks.js"  
+// import { startArchivingJob } from "./utils/request/cronTasks.js"
 // import { ApolloServerPluginLandingPageDisabled } from "@apollo/server/plugin/disabled"
 import {
   ApolloServerPluginLandingPageLocalDefault
@@ -26,15 +26,12 @@ const prisma = new PrismaClient()
 dotenv.config()
 const app = express()
 
-
-
 const httpServer = http.createServer(app)
 const schema = makeExecutableSchema({
   typeDefs: mergedTypeDefs,
   resolvers: mergedResolvers
 })
 const wsServer = new WebSocketServer({ server: httpServer, path: "/graphql" })
-
 
 const getDynamicContext = async (ctx, msg, args) => {
   // ctx is the graphql-ws Context where connectionParams live
@@ -132,49 +129,116 @@ app.use(
   express.json(),
   expressMiddleware(server, {
     context: async ({ req, res }) => {
-      const authHeader = req.headers.authorization
+      const authHeader = req.headers.authorization || null
+
       if (!authHeader) {
-        return { user: null, authHeader: null }
-      }
-      const token = authHeader.startsWith("Bearer ")
-        ? authHeader.slice(7, authHeader.length)
-        : authHeader
-      let user = null
-      if (token) {
-        try {
-          const decoded = jwt.verify(token, process.env.JWT_SECRET)
-          user = await prisma.user.findUnique({
-            where: { id: decoded.userId },
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              number: true,
-              role: true,
-              position: true,
-              airlineId: true,
-              airlineDepartmentId: true,
-              hotelId: true,
-              dispatcher: true,
-              support: true
-            }
-          })
-          // --------------------------------------------------------------------------------------------------------------------------------
-          // await prisma.user.update({
-          //   where: { id: decoded.userId },
-          //   data: { lastSeen: new Date() }
-          // })
-          // --------------------------------------------------------------------------------------------------------------------------------
-        } catch (e) {
-          if (e.name === "TokenExpiredError") {
-            // logger.warn("Просроченный токен")
-            throw new Error("Token expired")
-          }
-          // logger.error("Ошибка токена", e)
-          throw new Error("Invalid token")
+        return {
+          authHeader: null,
+          token: null,
+          subject: null,
+          subjectType: null,
+          user: null,
+          driver: null,
+          personal: null
         }
       }
-      return { user, authHeader }
+
+      const token = authHeader.startsWith("Bearer ")
+        ? authHeader.slice(7)
+        : authHeader
+
+      let decoded
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET)
+      } catch (e) {
+        if (e.name === "TokenExpiredError") {
+          throw new Error("Token expired")
+        }
+        throw new Error("Invalid token")
+      }
+
+      const { subjectType, userId, driverId, airlinePersonalId } = decoded
+
+      let user = null
+      let driver = null
+      let personal = null
+      let subject = null
+
+      if (subjectType === "USER" && userId) {
+        user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            number: true,
+            role: true,
+            position: true,
+            airlineId: true,
+            airlineDepartmentId: true,
+            hotelId: true,
+            dispatcher: true,
+            support: true
+          }
+        })
+        subject = user
+      }
+
+      if (subjectType === "DRIVER" && driverId) {
+        driver = await prisma.driver.findUnique({
+          where: { id: driverId },
+          select: {
+            id: true,
+            name: true,
+            phone: true,
+            email: true,
+            organizationId: true,
+            active: true,
+            rating: true
+          }
+        })
+        subject = driver
+      }
+
+      if (subjectType === "AIRLINE_PERSONAL" && airlinePersonalId) {
+        personal = await prisma.airlinePersonal.findUnique({
+          where: { id: airlinePersonalId },
+          select: {
+            id: true,
+            name: true,
+            number: true,
+            airlineId: true,
+            departmentId: true,
+            active: true,
+            positionId: true
+          }
+        })
+        subject = personal
+      }
+
+      // если после всех попыток никого не нашли — токен считаем невалидным
+      if (!subject) {
+        throw new Error("Invalid token")
+      }
+
+      // lastSeen только для User
+      // if (subjectType === "USER") {
+      //   await prisma.user.update({
+      //     where: { id: userId },
+      //     data: { lastSeen: new Date() },
+      //   });
+      // }
+
+      return {
+        authHeader,
+        token,
+        decoded,
+        subjectType, // "USER" | "DRIVER" | "AIRLINE_PERSONAL"
+        subject, // текущий субъект (user/driver/personal)
+        user,
+        driver,
+        personal
+      }
     }
   })
 )
