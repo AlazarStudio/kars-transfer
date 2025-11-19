@@ -257,7 +257,7 @@ const transferResolver = {
       return null
     },
     driver: async (parent, _) => {
-      if (parent.id) {
+      if (parent.driverId){
         const driver = await prisma.driver.findUnique({
           where: { id: parent.driverId }
         })
@@ -298,6 +298,13 @@ const transferResolver = {
         })
       }
       return null
+    },
+    airline: async(parent, _) => {
+      if (parent.airlineId) {
+        return await prisma.airline.findUnique({
+          where: { id: parent.airlineId }
+        })
+      }
     }
   }
 }

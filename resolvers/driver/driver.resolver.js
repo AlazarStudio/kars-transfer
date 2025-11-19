@@ -46,34 +46,44 @@ const driverResolver = {
       return { drivers, totalCount }
     },
     driverById: async (_, { id }) => {
-      const driver = await prisma.driver.findUnique({
-        where: { id: id },
-        include: { organization: true }
-      })
+      try{
+        const driver = await prisma.driver.findUnique({
+          where: { id: id },
+          include: { organization: true }
+        })
+        const moscowDate = {}
+  
+        moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+        moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
+  
+        Object.assign(driver, moscowDate)
+  
+        return driver
+      }
+      catch{
+          return new Error("Было введено некорректное ID или не существующее ID")
+        }
 
-      const moscowDate = {}
-
-      moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
-
-      Object.assign(driver, moscowDate)
-
-      return driver
     },
     driverByEmail: async (_, { email }) => {
-      const driver = await prisma.driver.findUnique({
-        where: { email: email },
-        include: { organization: true }
-      })
-
-      const moscowDate = {}
-
-      moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
-
-      Object.assign(driver, moscowDate)
-
-      return driver
+      try{
+        const driver = await prisma.driver.findUnique({
+          where: { email: email },
+          include: { organization: true }
+        })
+  
+        const moscowDate = {}
+  
+        moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+        moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
+  
+        Object.assign(driver, moscowDate)
+  
+        return driver
+      }
+      catch{
+          return new Error("Был введен не корректный EMAIL или не существующий EMAIL")
+        }
     }
   },
   Mutation: {
@@ -382,22 +392,29 @@ const driverResolver = {
       return driverWithUpdatedDocs
     },
     deleteDriver: async (_, { id }) => {
-      const deletedDriver = await prisma.driver.update({
-        where: { id: id },
-        include: { organization: true },
-        data: {
-          active: false
+      
+      try{
+          const deletedDriver = await prisma.driver.update({
+            where: { id: id },
+            include: { organization: true },
+            data: {
+              active: false
+            }
+          })
+          const moscowDate = {}
+    
+          moscowDate["createdAt"] = dateFormatter(deletedDriver["createdAt"])
+          moscowDate["updatedAt"] = dateFormatter(deletedDriver["updatedAt"])
+          Object.assign(deletedDriver, moscowDate)
+    
+          return deletedDriver
         }
-      })
 
-      const moscowDate = {}
-
-      moscowDate["createdAt"] = dateFormatter(deletedDriver["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(deletedDriver["updatedAt"])
-      Object.assign(deletedDriver, moscowDate)
-
-      return deletedDriver
-    }
+        catch{
+          return new Error("Было введено не корректное ID или не существующее ID")
+        }
+  
+      }
   },
   Driver: {
     organization: async (parent, _) => {
@@ -408,13 +425,20 @@ const driverResolver = {
       }
       return null
     },
+    transfers: async (parent, _) => {
+      if (parent.id) {
+        return await prisma.transfer.findMany({
+          where: { driverId: parent.id }
+        })
+      }
+    },
     transferMessages: async (parent, _) => {
       if (parent.id) {
         return await prisma.transferMessage.findMany({
           where: { senderDriverId: parent.id }
         })
       }
-      return null
+      
     }
   }
 }

@@ -47,6 +47,9 @@ const transferTypeDef = `#graphql
         driver: Driver
         # driverId: String
 
+        airline: Airline
+        airlineId: String
+
         # пассажиры (сотрудники авиакомпаний)
         persons:[AirlinePersonal!]!
 
@@ -166,7 +169,8 @@ const transferTypeDef = `#graphql
         dispatcherId: String 
         # назначенный водитель (может быть пусто до назначения)
         driverId: String
-
+        airlineId: String
+        
         # пассажиры (сотрудники авиакомпаний)
         personsId: [ID]
 
@@ -194,6 +198,8 @@ const transferTypeDef = `#graphql
         dispatcherId: String 
         # назначенный водитель (может быть пусто до назначения)
         driverId: String
+
+        airlineId: String
 
         # пассажиры (сотрудники авиакомпаний)
         personsId: [ID]

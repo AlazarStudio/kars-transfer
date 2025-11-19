@@ -9,7 +9,12 @@ const organizationResolver = {
       return await prisma.organization.findMany({})
     },
     organization: async (_, { id }) => {
-      return await prisma.organization.findUnique({ where: { id: id } })
+      try{
+        return await prisma.organization.findUnique({ where: { id: id } })
+      }
+      catch{
+        return new Error("Неккоректный ID")
+      }
     }
   },
   Mutation: {
@@ -43,22 +48,41 @@ const organizationResolver = {
       return newOrganization
     },
     updateOrganization: async (_, { id, input }) => {
-      const updatedOrganization = await prisma.organization.update({
-        where: { id: id },
-        data: input
-      })
+        const currentOrganization = await prisma.organization.findUnique({
+          where: { id: id }
+        })
 
-      return updatedOrganization
-    },
-    deleteOrganization: async (_, { id }) => {
-      const deletedOrganization = await prisma.organization.update({
-        where: { id: id },
-        data: {
-          active: false
+        const newData = {}
+        if (input["information"]) {
+          const newInformation = currentOrganization["information"]
+          Object.assign(newInformation, input["information"])
+
+          newData["information"] = newInformation
         }
-      })
-
-      return deletedOrganization
+    
+        if (input["name"]) newData["name"] = input["name"]
+        
+        const updatedOrganization = await prisma.organization.update({
+          where: { id: id },
+          data: newData
+        })
+  
+        return updatedOrganization
+      },
+    deleteOrganization: async (_, { id }) => {
+      try{
+        const deletedOrganization = await prisma.organization.update({
+          where: { id: id },
+          data: {
+            active: false
+          }
+        })
+  
+        return deletedOrganization
+      }
+      catch{
+        return new Error("Некорректное ID")
+      }
     }
   },
   Organization: {

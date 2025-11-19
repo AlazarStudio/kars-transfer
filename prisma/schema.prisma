@@ -160,6 +160,7 @@ model Airline {
   chat         Chat[]
   Notification Notification[]
   active       Boolean             @default(true)
+  transfers    Transfer[]
 }
 
 model AirlineDepartment {
@@ -503,6 +504,9 @@ model Transfer {
   // назначенный водитель (может быть пусто до назначения)
   driver   Driver? @relation(fields: [driverId], references: [id])
   driverId String? @db.ObjectId
+
+  airline   Airline? @relation(fields: [airlineId], references: [id])
+  airlineId String?  @db.ObjectId
 
   // пассажиры (сотрудники авиакомпаний)
   persons TransferPassenger[]
