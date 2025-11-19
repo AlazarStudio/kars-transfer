@@ -267,7 +267,7 @@ const transferResolver = {
     persons: async (parent, _) => {
       if (parent.id){
         return await prisma.transferPassenger.findMany({
-          where: { transferId: parent.id }
+          where: { transferId: parent.id }, include: { personal: true }
         })
       }
       return null
