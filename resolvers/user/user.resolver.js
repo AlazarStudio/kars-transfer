@@ -754,7 +754,15 @@ const userResolver = {
       } else {
         return false
       }
-    }
+    },
+    airline: async (parent) => {
+      if (parent.airlineId) {
+        return await prisma.airline.findUnique({
+          where: { id: parent.airlineId }
+        })
+      }
+      return null
+     }
   }
 }
 
