@@ -33,6 +33,7 @@ type User {
   position: Position
   token: String
   hotelId: ID
+  airline: Airline
   airlineId: ID
   images: [String]
   dispatcher: Boolean
