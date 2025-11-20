@@ -25,6 +25,7 @@ type User {
   lastSeen: Date
   name: String!
   email: String!
+  number: String
   login: String!
   password: String!
   role: Role!
@@ -119,6 +120,7 @@ input PositionInput {
 input RegisterUserInput {
   name: String!
   email: String!
+  number: String
   login: String!
   password: String!
   role: Role
@@ -134,6 +136,7 @@ input UpdateUserInput {
   id: ID!
   name: String
   email: String
+  number: String
   login: String
   password: String
   oldPassword: String
@@ -153,6 +156,7 @@ type AuthPayload {
   id: ID
   name: String
   email: String
+  number: String
   login: String
   role: Role
   # position: String
