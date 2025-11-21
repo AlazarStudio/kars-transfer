@@ -172,7 +172,7 @@ const globalResolver = {
 
       // 4. Генерим JWT
       const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, {
-        expiresIn: "24h"
+        expiresIn: "72h"
       })
 
       // 5. Общий ответ
