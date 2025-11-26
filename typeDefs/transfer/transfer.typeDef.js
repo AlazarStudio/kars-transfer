@@ -4,8 +4,11 @@ const transferTypeDef = `#graphql
     enum TransferStatus {
         PENDING
         ASSIGNED
-        CANCELED
-        DONE
+        ACCEPTED
+        ARRIVED
+        IN_PROGRESS
+        COMPLETED
+        CANCELLED
     }
 
     enum TransferChatType {
