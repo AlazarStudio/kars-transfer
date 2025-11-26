@@ -189,7 +189,7 @@ app.use(
           select: {
             id: true,
             name: true,
-            phone: true,
+            number: true,
             email: true,
             organizationId: true,
             active: true,

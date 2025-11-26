@@ -35,7 +35,7 @@ const driverTypeDef = `#graphql
         createdAt: Date!                 
         updatedAt: Date!                 
         name: String!
-        phone: String
+        number: String
         email: String                  
         password: String!
         car: String
@@ -67,7 +67,7 @@ const driverTypeDef = `#graphql
 
     input DriverCreateInput{               
         name: String!
-        phone: String!
+        number: String!
         email: String!                  
         password: String!
         car: String
@@ -82,7 +82,7 @@ const driverTypeDef = `#graphql
 
     input DriverUpdateInput{             
         name: String
-        phone: String
+        number: String
         email: String                  
         newPassword: String
         oldPassword: String

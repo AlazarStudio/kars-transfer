@@ -30,18 +30,18 @@ const driverResolver = {
             include: { organization: true }
           })
 
-      const moscowDates = []
+      // const moscowDates = []
 
-      for (let driver of drivers) {
-        moscowDates.push({
-          createdAt: dateFormatter(driver["createdAt"]),
-          updatedAt: dateFormatter(driver["updatedAt"])
-        })
-      }
+      // for (let driver of drivers) {
+      //   moscowDates.push({
+      //     createdAt: dateFormatter(driver["createdAt"]),
+      //     updatedAt: dateFormatter(driver["updatedAt"])
+      //   })
+      // }
 
-      for (let i in moscowDates) {
-        Object.assign(drivers[i], moscowDates[i])
-      }
+      // for (let i in moscowDates) {
+      //   Object.assign(drivers[i], moscowDates[i])
+      // }
 
       return { drivers, totalCount }
     },
@@ -51,12 +51,12 @@ const driverResolver = {
           where: { id: id },
           include: { organization: true }
         })
-        const moscowDate = {}
+        // const moscowDate = {}
   
-        moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
-        moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
+        // moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+        // moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
   
-        Object.assign(driver, moscowDate)
+        // Object.assign(driver, moscowDate)
   
         return driver
       }
@@ -72,12 +72,12 @@ const driverResolver = {
           include: { organization: true }
         })
   
-        const moscowDate = {}
+        // const moscowDate = {}
   
-        moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
-        moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
+        // moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
+        // moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
   
-        Object.assign(driver, moscowDate)
+        // Object.assign(driver, moscowDate)
   
         return driver
       }
@@ -101,7 +101,7 @@ const driverResolver = {
     ) => {
       const {
         name,
-        phone,
+        number,
         email,
         password,
         car,
@@ -113,18 +113,18 @@ const driverResolver = {
         registrationStatus
       } = input
 
-      if (email || phone) {
+      if (email || number) {
         const existing = await prisma.driver.findFirst({
           where: {
-            OR: [...(email ? [{ email }] : []), ...(phone ? [{ phone }] : [])]
+            OR: [...(email ? [{ email }] : []), ...(number ? [{ number }] : [])]
           }
         })
         if (existing) {
-          if (existing.email === email && existing.phone === phone)
+          if (existing.email === email && existing.number === number)
             throw new Error("Водитель с таким email и телефоном уже существует")
           if (existing.email === email)
             throw new Error("Водитель с таким email уже существует")
-          if (existing.phone === phone)
+          if (existing.number === number)
             throw new Error("Водитель с таким телефоном уже существует")
         }
       }
@@ -191,7 +191,7 @@ const driverResolver = {
 
       const data = {
         name,
-        phone,
+        number,
         email,
         password: hashedPassword,
         car,
@@ -328,12 +328,12 @@ const driverResolver = {
 
       pubsub.publish(DRIVER_CREATED, { driverCreated: updatedDriver })
 
-      const moscowDate = {}
+      // const moscowDate = {}
 
-      moscowDate["createdAt"] = dateFormatter(updatedDriver["createdAt"])
-      moscowDate["updatedAt"] = dateFormatter(updatedDriver["updatedAt"])
+      // moscowDate["createdAt"] = dateFormatter(updatedDriver["createdAt"])
+      // moscowDate["updatedAt"] = dateFormatter(updatedDriver["updatedAt"])
 
-      Object.assign(updatedDriver, moscowDate)
+      // Object.assign(updatedDriver, moscowDate)
 
       return updatedDriver
     },
@@ -378,16 +378,16 @@ const driverResolver = {
         where: { id }
       })
 
-      const moscowDate = {}
+      // const moscowDate = {}
 
-      moscowDate["createdAt"] = dateFormatter(
-        driverWithUpdatedDocs["createdAt"]
-      )
-      moscowDate["updatedAt"] = dateFormatter(
-        driverWithUpdatedDocs["updatedAt"]
-      )
+      // moscowDate["createdAt"] = dateFormatter(
+      //   driverWithUpdatedDocs["createdAt"]
+      // )
+      // moscowDate["updatedAt"] = dateFormatter(
+      //   driverWithUpdatedDocs["updatedAt"]
+      // )
 
-      Object.assign(driverWithUpdatedDocs, moscowDate)
+      // Object.assign(driverWithUpdatedDocs, moscowDate)
 
       return driverWithUpdatedDocs
     },
@@ -401,11 +401,11 @@ const driverResolver = {
               active: false
             }
           })
-          const moscowDate = {}
+          // const moscowDate = {}
     
-          moscowDate["createdAt"] = dateFormatter(deletedDriver["createdAt"])
-          moscowDate["updatedAt"] = dateFormatter(deletedDriver["updatedAt"])
-          Object.assign(deletedDriver, moscowDate)
+          // moscowDate["createdAt"] = dateFormatter(deletedDriver["createdAt"])
+          // moscowDate["updatedAt"] = dateFormatter(deletedDriver["updatedAt"])
+          // Object.assign(deletedDriver, moscowDate)
     
           return deletedDriver
         }

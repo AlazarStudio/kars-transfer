@@ -456,7 +456,7 @@ model Driver {
   createdAt              DateTime                 @default(now()) @map("created_at")
   updatedAt              DateTime                 @updatedAt @map("updated_at")
   name                   String
-  phone                  String?
+  number                 String?
   email                  String?                  @unique
   password               String?
   car                    String?
