@@ -210,7 +210,7 @@ const transferTypeDef = `#graphql
 
         description: String # комментарий
         baggage: String # инфо о багаже
-     
+     cancellReason: String
         scheduledPickupAt: Date # к скольки приехать к пассажиру
         driverAssignmentAt: Date
         orderAcceptanceAt: Date
