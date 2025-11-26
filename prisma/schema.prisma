@@ -514,9 +514,10 @@ model Transfer {
   // пассажиры (сотрудники авиакомпаний)
   persons TransferPassenger[]
 
-  description String? // комментарий
-  baggage     String? // инфо о багаже
-  files       String[] // вложения/фото при необходимости
+  description   String? // комментарий
+  cancellReason String?
+  baggage       String? // инфо о багаже
+  files         String[] // вложения/фото при необходимости
 
   scheduledPickupAt     DateTime? // к скольки приехать к пассажиру
   driverAssignmentAt    DateTime?

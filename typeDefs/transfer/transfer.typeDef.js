@@ -57,6 +57,7 @@ const transferTypeDef = `#graphql
         persons:[AirlinePersonal!]!
 
         description: String # комментарий
+        cancellReason: String
         baggage: String # инфо о багаже
         files: [String!] # вложения/фото при необходимости
 
