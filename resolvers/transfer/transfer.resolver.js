@@ -61,7 +61,7 @@ const transferResolver = {
           }
         }
         // moscowDates.push(moscowDate)
-        Object.assign(transfer, moscowDate)
+        // Object.assign(transfer, moscowDate)
       }
 
       return { transfers, totalCount }
@@ -110,7 +110,7 @@ const transferResolver = {
         }
       }
 
-      Object.assign(transfer, moscowDate)
+      // Object.assign(transfer, moscowDate)
       return transfer
     }
   },
