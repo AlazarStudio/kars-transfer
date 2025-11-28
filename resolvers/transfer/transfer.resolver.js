@@ -9,6 +9,18 @@ import { dateFormatter } from "../../exports/dateTimeFormatterVersion2.js"
 
 const prisma = new PrismaClient()
 
+const DATE_FIELDS = [
+  "scheduledPickupAt",
+  "driverAssignmentAt",
+  "orderAcceptanceAt",
+  "arrivedToPassengerAt",
+  "departedAt",
+  "arrivedAt",
+  "finishedAt",
+  "createdAt",
+  "updatedAt"
+]
+
 const transferResolver = {
   Query: {
     transfers: async (_, { pagination }, context) => {
@@ -21,7 +33,7 @@ const transferResolver = {
             take: take
           })
 
-      const moscowDates = []
+      // const moscowDates = []
 
       // for (let transfer of transfers) {
       //   moscowDates.push({
@@ -210,58 +222,56 @@ const transferResolver = {
       return newTransfer
     },
     updateTransfer: async (_, { id, input }) => {
-      const updatedData = {}
+      const existing = await prisma.transfer.findUnique({ where: { id } })
+      if (!existing) {
+        throw new Error(`Transfer с id ${id} не найден`)
+      }
 
-      for (let key in input) {
-        if (input[key] !== undefined) {
-          if (
-            [
-              "scheduledPickupAt",
-              "driverAssignmentAt",
-              "orderAcceptanceAt",
-              "arrivedToPassengerAt",
-              "departedAt",
-              "arrivedAt",
-              "finishedAt",
-              "createdAt",
-              "updatedAt"
-            ].includes(key)
-          ) {
-            updatedData[key] = new Date(input[key])
-          } else {
-            updatedData[key] = input[key]
-          }
+      const { dispatcherId, driverId, personsId, ...restInput } = input
+
+      const data = {}
+
+      // скаляры + даты
+      for (const key in restInput) {
+        const value = restInput[key]
+        if (value === undefined) continue // не трогаем поле
+
+        if (DATE_FIELDS.includes(key)) {
+          data[key] = value === null ? null : new Date(value) // null = очистить дату
+        } else {
+          data[key] = value
+        }
+      }
+
+      // связь с диспетчером
+      if (dispatcherId !== undefined) {
+        data.dispatcher =
+          dispatcherId === null
+            ? { disconnect: true } // убрать диспетчера
+            : { connect: { id: dispatcherId } }
+      }
+
+      // связь с водителем
+      if (driverId !== undefined) {
+        data.driver =
+          driverId === null
+            ? { disconnect: true } // убрать водителя
+            : { connect: { id: driverId } }
+      }
+
+      // ПАССАЖИРЫ: пример, если хочешь полностью заменить список
+      if (Array.isArray(personsId)) {
+        data.persons = {
+          set: personsId.map((pId) => ({ id: pId })) // или connect/create под свою модель
         }
       }
 
       const updatedTransfer = await prisma.transfer.update({
-        where: { id: id },
-        data: updatedData
+        where: { id }, // если id числовой — Number(id)
+        data
       })
 
       pubsub.publish(TRANSFER_UPDATED, { transferUpdated: updatedTransfer })
-
-      // const moscowDate = {}
-
-      // moscowDate["scheduledPickupAt"] = dateFormatter(
-      //   updatedTransfer["scheduledPickupAt"]
-      // )
-      // moscowDate["driverAssignmentAt"] = dateFormatter(
-      //   updatedTransfer["driverAssignmentAt"]
-      // )
-      // moscowDate["orderAcceptanceAt"] = dateFormatter(
-      //   updatedTransfer["orderAcceptanceAt"]
-      // )
-      // moscowDate["arrivedToPassengerAt"] = dateFormatter(
-      //   updatedTransfer["arrivedToPassengerAt"]
-      // )
-      // moscowDate["departedAt"] = dateFormatter(updatedTransfer["departedAt"])
-      // moscowDate["arrivedAt"] = dateFormatter(updatedTransfer["arrivedAt"])
-      // moscowDate["finishedAt"] = dateFormatter(updatedTransfer["finishedAt"])
-      // moscowDate["createdAt"] = dateFormatter(updatedTransfer["createdAt"])
-      // moscowDate["updatedAt"] = dateFormatter(updatedTransfer["updatedAt"])
-
-      // Object.assign(updatedTransfer, moscowDate)
 
       return updatedTransfer
     }
