@@ -7,7 +7,8 @@ const transferTypeDef = /* GraphQL */ `
     ASSIGNED
     ACCEPTED
     ARRIVED
-    IN_PROGRESS
+    IN_PROGRESS_TO_CLIENT
+    IN_PROGRESS_TO_HOTEL
     COMPLETED
     CANCELLED
   }
