@@ -315,7 +315,7 @@ const driverResolver = {
         data: updatedData
       })
 
-      pubsub.publish(DRIVER_CREATED, { driverCreated: updatedDriver })
+      pubsub.publish(DRIVER_UPDATED, { driverUpdated: updatedDriver })
 
       // const moscowDate = {}
 
@@ -401,6 +401,14 @@ const driverResolver = {
       }
     }
   },
+    Subscription: {
+      driverCreated: {
+        subscribe: () => pubsub.asyncIterator([DRIVER_CREATED])
+      },
+      driverUpdated: {
+        subscribe: () => pubsub.asyncIterator([DRIVER_UPDATED])
+      }
+    },
   Driver: {
     organization: async (parent, _) => {
       if (parent.organizationId) {
