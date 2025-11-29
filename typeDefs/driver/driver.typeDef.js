@@ -161,6 +161,7 @@ const driverTypeDef = /* GraphQL */ `
 
   type Subscription {
     driverCreated: Driver!
+    driverUpdated: Driver!
     driverOnline: Boolean
   }
 `
