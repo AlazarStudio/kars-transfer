@@ -46,44 +46,43 @@ const driverResolver = {
       return { drivers, totalCount }
     },
     driverById: async (_, { id }) => {
-      try{
+      try {
         const driver = await prisma.driver.findUnique({
           where: { id: id },
           include: { organization: true }
         })
         // const moscowDate = {}
-  
+
         // moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
         // moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
-  
-        // Object.assign(driver, moscowDate)
-  
-        return driver
-      }
-      catch{
-          return new Error("Было введено некорректное ID или не существующее ID")
-        }
 
+        // Object.assign(driver, moscowDate)
+
+        return driver
+      } catch {
+        return new Error("Было введено некорректное ID или не существующее ID")
+      }
     },
     driverByEmail: async (_, { email }) => {
-      try{
+      try {
         const driver = await prisma.driver.findUnique({
           where: { email: email },
           include: { organization: true }
         })
-  
+
         // const moscowDate = {}
-  
+
         // moscowDate["createdAt"] = dateFormatter(driver["createdAt"])
         // moscowDate["updatedAt"] = dateFormatter(driver["updatedAt"])
-  
+
         // Object.assign(driver, moscowDate)
-  
+
         return driver
+      } catch {
+        return new Error(
+          "Был введен не корректный EMAIL или не существующий EMAIL"
+        )
       }
-      catch{
-          return new Error("Был введен не корректный EMAIL или не существующий EMAIL")
-        }
     }
   },
   Mutation: {
@@ -229,7 +228,15 @@ const driverResolver = {
       const currentDriver = await prisma.driver.findUnique({
         where: { id: id }
       })
-
+      console.log(
+        "r \n ",
+        driverPhoto,
+        carPhotos,
+        stsPhoto,
+        ptsPhoto,
+        osagoPhoto,
+        licensePhoto
+      )
       for (let key in input) {
         if (
           key !== "newPassword" &&
@@ -341,7 +348,7 @@ const driverResolver = {
     // transferSignIn: async (_, { input }) => {
     //   const { email, password } = input
     //   // Ищем пользователя по логину
-    //   const user = await prisma.driver.findUnique({ where: { email } }) 
+    //   const user = await prisma.driver.findUnique({ where: { email } })
     //   // Проверка корректности пароля с помощью argon2.verify
     //   if (!user.active) {
     //     throw new Error("User is not active")
@@ -392,33 +399,29 @@ const driverResolver = {
       return driverWithUpdatedDocs
     },
     deleteDriver: async (_, { id }) => {
-      
-      try{
-          const deletedDriver = await prisma.driver.update({
-            where: { id: id },
-            include: { organization: true },
-            data: {
-              active: false
-            }
-          })
-          // const moscowDate = {}
-    
-          // moscowDate["createdAt"] = dateFormatter(deletedDriver["createdAt"])
-          // moscowDate["updatedAt"] = dateFormatter(deletedDriver["updatedAt"])
-          // Object.assign(deletedDriver, moscowDate)
-    
-          return deletedDriver
-        }
+      try {
+        const deletedDriver = await prisma.driver.update({
+          where: { id: id },
+          include: { organization: true },
+          data: {
+            active: false
+          }
+        })
+        // const moscowDate = {}
 
-        catch{
-          return new Error("Было введено не корректное ID или не существующее ID")
-        }
-  
+        // moscowDate["createdAt"] = dateFormatter(deletedDriver["createdAt"])
+        // moscowDate["updatedAt"] = dateFormatter(deletedDriver["updatedAt"])
+        // Object.assign(deletedDriver, moscowDate)
+
+        return deletedDriver
+      } catch {
+        return new Error("Было введено не корректное ID или не существующее ID")
       }
+    }
   },
   Driver: {
     organization: async (parent, _) => {
-      if (parent.organizationId){
+      if (parent.organizationId) {
         return await prisma.organization.findUnique({
           where: { id: parent.organizationId }
         })
@@ -438,7 +441,6 @@ const driverResolver = {
           where: { senderDriverId: parent.id }
         })
       }
-      
     }
   }
 }
