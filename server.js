@@ -117,7 +117,7 @@ const server = new ApolloServer({
   cache: "bounded",
   introspection: process.env.NODE_ENV !== "production",
   plugins: [
-    ApolloServerPluginDrainHttpServer({ httpsServer }),
+    ApolloServerPluginDrainHttpServer({ httpServer: httpsServer }),
     ApolloServerPluginLandingPageLocalDefault(),
     {
       async serverWillStart() {
