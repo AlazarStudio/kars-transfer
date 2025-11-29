@@ -229,6 +229,8 @@ const driverResolver = {
         where: { id: id }
       })
 
+      console.log("currentDriver ", currentDriver)
+
       for (let key in input) {
         if (
           key !== "newPassword" &&
@@ -319,16 +321,6 @@ const driverResolver = {
         osagoPhoto: osagoPhotoPaths,
         licensePhoto: licensePhotoPaths
       }
-
-      console.log(
-        "documents ",
-        driverPhotoPaths,
-        carPhotosPaths,
-        stsPhotoPaths,
-        ptsPhotoPaths,
-        osagoPhotoPaths,
-        licensePhotoPaths
-      )
 
       const updatedDriver = await prisma.driver.update({
         where: { id: id },
