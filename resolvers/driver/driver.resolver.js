@@ -229,8 +229,6 @@ const driverResolver = {
         where: { id: id }
       })
 
-      console.log("currentDriver ", currentDriver)
-
       for (let key in input) {
         if (
           key !== "newPassword" &&
@@ -262,6 +260,9 @@ const driverResolver = {
           }
         }
       }
+
+      console.log("driverPhotoPaths " + driverPhotoPaths)
+
       let carPhotosPaths = currentDriver.carPhotosPaths
         ? currentDriver.carPhotosPaths
         : []
