@@ -253,6 +253,7 @@ const driverResolver = {
       let driverPhotoPaths = currentDriver.driverPhotoPaths
         ? currentDriver.driverPhotoPaths
         : []
+      console.log("driverPhotoPaths " + driverPhotoPaths)
       if (driverPhoto != undefined) {
         if (driverPhoto.length > 0) {
           for (const image of driverPhoto) {
@@ -260,8 +261,6 @@ const driverResolver = {
           }
         }
       }
-
-      console.log("driverPhotoPaths " + driverPhotoPaths)
 
       let carPhotosPaths = currentDriver.carPhotosPaths
         ? currentDriver.carPhotosPaths
