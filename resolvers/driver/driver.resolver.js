@@ -321,8 +321,13 @@ const driverResolver = {
       }
 
       console.log(
-        "documents " + updatedData.documents,
-        "\n documents str " + JSON.stringify(updatedData.documents)
+        "documents ",
+        driverPhotoPaths,
+        carPhotosPaths,
+        stsPhotoPaths,
+        ptsPhotoPaths,
+        osagoPhotoPaths,
+        licensePhotoPaths
       )
 
       const updatedDriver = await prisma.driver.update({
