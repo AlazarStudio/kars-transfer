@@ -4,7 +4,7 @@ import {
   TRANSFER_CREATED,
   TRANSFER_UPDATED
 } from "../../exports/pubsub.js"
-import { printIntrospectionSchema } from "graphql"
+import { printIntrospectionSchema, subscribe } from "graphql"
 import { dateFormatter } from "../../exports/dateTimeFormatterVersion2.js"
 
 const prisma = new PrismaClient()
@@ -274,6 +274,14 @@ const transferResolver = {
       pubsub.publish(TRANSFER_UPDATED, { transferUpdated: updatedTransfer })
 
       return updatedTransfer
+    }
+  },
+  Subscription: {
+    transferCreated: {
+      subscribe: () => pubsub.asyncIterator([TRANSFER_CREATED])
+    },
+    transferUpdated: {
+      subscribe: () => pubsub.asyncIterator([TRANSFER_UPDATED])
     }
   },
   Transfer: {
