@@ -228,15 +228,7 @@ const driverResolver = {
       const currentDriver = await prisma.driver.findUnique({
         where: { id: id }
       })
-      console.log(
-        "r \n ",
-        driverPhoto,
-        carPhotos,
-        stsPhoto,
-        ptsPhoto,
-        osagoPhoto,
-        licensePhoto
-      )
+
       for (let key in input) {
         if (
           key !== "newPassword" &&
@@ -327,6 +319,11 @@ const driverResolver = {
         osagoPhoto: osagoPhotoPaths,
         licensePhoto: licensePhotoPaths
       }
+
+      console.log(
+        "documents " + updatedData.documents,
+        "\n documents str " + JSON.stringify(updatedData.documents)
+      )
 
       const updatedDriver = await prisma.driver.update({
         where: { id: id },
