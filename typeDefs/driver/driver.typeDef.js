@@ -95,7 +95,7 @@ const driverTypeDef = /* GraphQL */ `
     extraEquipment: [String]
     organizationId: String
     organizationConfirmed: Boolean
-    documents: DriverDocumentsUpdateInput
+    # documents: DriverDocumentsUpdateInput
     registrationStatus: DriverRegistrationStatus
     active: Boolean
   }
@@ -142,7 +142,16 @@ const driverTypeDef = /* GraphQL */ `
       osagoPhoto: [Upload]
       licensePhoto: [Upload]
     ): Driver!
-    updateDriver(id: ID!, input: DriverUpdateInput): Driver!
+    updateDriver(
+      id: ID!
+      input: DriverUpdateInput
+      driverPhoto: [Upload]
+      carPhotos: [Upload]
+      stsPhoto: [Upload]
+      ptsPhoto: [Upload]
+      osagoPhoto: [Upload]
+      licensePhoto: [Upload]
+    ): Driver!
     # transferSignIn(input: transferSignInput): DriverAuthPayload!
     updateDriverDocuments(id: ID!, input: DriverDocumentsUpdateInput!): Driver!
     deleteDriver(id: ID!): Driver!
