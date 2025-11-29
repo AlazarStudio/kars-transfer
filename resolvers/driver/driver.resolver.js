@@ -250,9 +250,8 @@ const driverResolver = {
         updatedData.password = await argon2.hash(input.newPassword)
       }
 
-      let driverPhotoPaths = currentDriver.driverPhotoPaths
-        ? currentDriver.driverPhotoPaths
-        : []
+      let driverPhotoPaths = currentDriver?.driverPhotoPaths ?? []
+
       console.log("driverPhotoPaths " + driverPhotoPaths)
       if (driverPhoto != undefined) {
         if (driverPhoto.length > 0) {
