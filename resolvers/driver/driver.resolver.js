@@ -250,11 +250,8 @@ const driverResolver = {
         updatedData.password = await argon2.hash(input.newPassword)
       }
 
-      console.log("currentDriver.driverPhotoPaths " + currentDriver.driverPhotoPaths)
+      let driverPhotoPaths = currentDriver.documents.driverPhoto ?? []
 
-      let driverPhotoPaths = currentDriver?.driverPhotoPaths ?? []
-
-      console.log("driverPhotoPaths " + driverPhotoPaths)
       if (driverPhoto != undefined) {
         if (driverPhoto.length > 0) {
           for (const image of driverPhoto) {
@@ -263,9 +260,7 @@ const driverResolver = {
         }
       }
 
-      let carPhotosPaths = currentDriver.carPhotosPaths
-        ? currentDriver.carPhotosPaths
-        : []
+      let carPhotosPaths = currentDriver.documents.carPhotos ?? []
       if (carPhotos != undefined) {
         if (carPhotos.length > 0) {
           for (const image of carPhotos) {
@@ -273,9 +268,7 @@ const driverResolver = {
           }
         }
       }
-      let stsPhotoPaths = currentDriver.stsPhotoPaths
-        ? currentDriver.stsPhotoPaths
-        : []
+      let stsPhotoPaths = currentDriver.documents.stsPhoto ?? []
       if (stsPhoto != undefined) {
         if (stsPhoto.length > 0) {
           for (const image of stsPhoto) {
@@ -283,9 +276,7 @@ const driverResolver = {
           }
         }
       }
-      let ptsPhotoPaths = currentDriver.ptsPhotoPaths
-        ? currentDriver.ptsPhotoPaths
-        : []
+      let ptsPhotoPaths = currentDriver.documents.ptsPhoto ?? []
       if (ptsPhoto != undefined) {
         if (ptsPhoto.length > 0) {
           for (const image of ptsPhoto) {
@@ -293,9 +284,7 @@ const driverResolver = {
           }
         }
       }
-      let osagoPhotoPaths = currentDriver.osagoPhotoPaths
-        ? currentDriver.osagoPhotoPaths
-        : []
+      let osagoPhotoPaths = currentDriver.documents.osagoPhoto ?? []
       if (osagoPhoto != undefined) {
         if (osagoPhoto.length > 0) {
           for (const image of osagoPhoto) {
@@ -303,9 +292,7 @@ const driverResolver = {
           }
         }
       }
-      let licensePhotoPaths = currentDriver.licensePhotoPaths
-        ? currentDriver.licensePhotoPaths
-        : []
+      let licensePhotoPaths = currentDriver.documents.licensePhoto ?? []
       if (licensePhoto != undefined) {
         if (licensePhoto.length > 0) {
           for (const image of licensePhoto) {
