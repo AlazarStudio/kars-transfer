@@ -475,6 +475,7 @@ model Driver {
   transfers              Transfer[]
   transferMessages       TransferMessage[]        @relation("DriverAuthor")
   active                 Boolean                  @default(true)
+  online                 Boolean?                 @default(false)
   TransferReview         TransferReview[]
   TransferChat           TransferChat[]
   TransferMessageRead    TransferMessageRead[]

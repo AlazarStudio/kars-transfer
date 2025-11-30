@@ -54,6 +54,7 @@ const driverTypeDef = /* GraphQL */ `
     transfers: [Transfer]
     transferMessages: [TransferMessage]
     active: Boolean
+    online: Boolean
     # TransferReview: [TransferReview]
     # TransferChat: [TransferChat]
     # TransferMessageRead: [TransferMessageRead]
@@ -98,6 +99,7 @@ const driverTypeDef = /* GraphQL */ `
     # documents: DriverDocumentsUpdateInput
     registrationStatus: DriverRegistrationStatus
     active: Boolean
+    online: Boolean
   }
 
   input DriverDocumentsUpdateInput {
