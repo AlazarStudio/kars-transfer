@@ -268,11 +268,11 @@ const userResolver = {
       })
 
       // Логирование действия создания пользователя
-      await logAction({
-        context,
-        action: "create_user",
-        description: `Пользователь <span style='color:#545873'>${context.user.name}</span> добавил нового пользователя <span style='color:#545873'>${createdData.name}</span>`
-      })
+      // await logAction({
+      //   context,
+      //   action: "create_user",
+      //   description: `Пользователь <span style='color:#545873'>${context.user.name}</span> добавил нового пользователя <span style='color:#545873'>${createdData.name}</span>`
+      // })
 
       // Публикация события о создании пользователя для подписок
       pubsub.publish(USER_CREATED, { userCreated: newUser })
