@@ -14,6 +14,8 @@ import {
 } from "../../exports/pubsub.js"
 
 import { PrismaClient } from "@prisma/client"
+import argon2 from "argon2"
+
 const prisma = new PrismaClient()
 
 const airlineResolver = {
