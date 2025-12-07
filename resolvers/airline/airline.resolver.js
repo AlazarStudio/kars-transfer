@@ -76,7 +76,7 @@ const airlineResolver = {
     airlineStaffs: async (_, { airlineId }, context) => {
       // await allMiddleware(context)
       return await prisma.airlinePersonal.findMany({
-        where: { airlineId },
+        where: { airlineId: airlineId },
         include: { position: true },
         orderBy: { name: "asc" }
       })
@@ -484,12 +484,6 @@ const airlineResolver = {
       await prisma.airlinePersonal.update({
         where: { id },
         data: updatedData
-      })
-      await logAction({
-        context,
-        action: "update_airline",
-        description: `Пользователь  <span style='color:#545873'> ${user.name} </span>  обновил данные пользователя  <span style='color:#545873'> ${person.name} </span> `,
-        airlineId: id
       })
     },
 
