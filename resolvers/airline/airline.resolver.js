@@ -481,7 +481,7 @@ const airlineResolver = {
         updatedData.password = hashedPassword
       }
 
-      await prisma.airlinePersonal.update({
+      return await prisma.airlinePersonal.update({
         where: { id },
         data: updatedData
       })
