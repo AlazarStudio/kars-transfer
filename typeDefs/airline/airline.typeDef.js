@@ -43,6 +43,7 @@ const airlineTypeDef = /* GraphQL */ `
     airline: Airline
     department: AirlineDepartment
     active: Boolean
+    images: [String!]!
   }
 
   # Пагинация, Query, Mutation и Subscription
@@ -86,6 +87,8 @@ const airlineTypeDef = /* GraphQL */ `
   }
 
   input updateAirPersInput {
+    name: String
+    number: String
     email: String
     password: String
     oldPassword: String
@@ -117,7 +120,11 @@ const airlineTypeDef = /* GraphQL */ `
       input: UpdateAirlineInput!
       images: [Upload!]
     ): Airline!
-    updateAirlinePerson(id: ID!, input: updateAirPersInput!): AirlinePersonal!
+    updateAirlinePerson(
+      id: ID!
+      input: updateAirPersInput!
+      images: [Upload!]
+    ): AirlinePersonal!
     deleteAirline(id: ID!): Airline!
     deleteAirlineDepartment(id: ID!): AirlineDepartment!
     deleteAirlineStaff(id: ID!): AirlinePersonal!

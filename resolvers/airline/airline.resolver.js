@@ -457,14 +457,13 @@ const airlineResolver = {
       }
     },
 
-    updateAirlinePerson: async (_, { id, input }, context) => {
-      const { email, password, oldPassword } = input
+    updateAirlinePerson: async (_, { id, input, images }, context) => {
+      const { email, password, oldPassword, name, number } = input
       const currentUser = await prisma.airlinePersonal.findUnique({
         where: { id }
       })
       // Обновляем данные существующего сотрудника
       const updatedData = {}
-      if (email !== undefined) updatedData.email = email
       if (password) {
         // if (!oldPassword) {
         //   throw new Error(
@@ -479,6 +478,17 @@ const airlineResolver = {
         // Хэшируем новый пароль и добавляем в объект обновления
         const hashedPassword = await argon2.hash(password)
         updatedData.password = hashedPassword
+      }
+      if (email !== undefined) updatedData.email = email
+      if (name !== undefined) updatedData.name = name
+      if (number !== undefined) updatedData.number = number
+
+      if (images && images.length > 0) {
+        let imagePaths = []
+        for (const image of images) {
+          imagePaths.push(await uploadImage(image))
+        }
+        updatedData.images = imagePaths
       }
 
       return await prisma.airlinePersonal.update({
