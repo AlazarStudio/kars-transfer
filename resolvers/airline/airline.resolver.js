@@ -73,10 +73,10 @@ const airlineResolver = {
       })
     },
 
-    airlineStaffs: async (_, { airlineId }, context) => {
+    airlineStaffs: async (_, { id }, context) => {
       // await allMiddleware(context)
       return await prisma.airlinePersonal.findMany({
-        where: { airlineId: airlineId },
+        where: { airlineId: id },
         include: { position: true },
         orderBy: { name: "asc" }
       })
