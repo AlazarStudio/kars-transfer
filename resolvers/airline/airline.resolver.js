@@ -74,7 +74,7 @@ const airlineResolver = {
     airlineStaffs: async (_, { airlineId }, context) => {
       // await allMiddleware(context)
       return await prisma.airlinePersonal.findMany({
-        where: { airlineId, active: true },
+        where: { airlineId },
         include: { position: true },
         orderBy: { name: "asc" }
       })
@@ -464,16 +464,16 @@ const airlineResolver = {
       const updatedData = {}
       if (email !== undefined) updatedData.email = email
       if (password) {
-        if (!oldPassword) {
-          throw new Error(
-            "Для обновления пароля необходимо указать предыдущий пароль."
-          )
-        }
+        // if (!oldPassword) {
+        //   throw new Error(
+        //     "Для обновления пароля необходимо указать предыдущий пароль."
+        //   )
+        // }
         // Проверяем, что oldPassword совпадает с текущим паролем
-        const valid = await argon2.verify(currentUser.password, oldPassword)
-        if (!valid) {
-          throw new Error("Указан неверный пароль.")
-        }
+        // const valid = await argon2.verify(currentUser.password, oldPassword)
+        // if (!valid) {
+        //   throw new Error("Указан неверный пароль.")
+        // }
         // Хэшируем новый пароль и добавляем в объект обновления
         const hashedPassword = await argon2.hash(password)
         updatedData.password = hashedPassword

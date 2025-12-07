@@ -229,6 +229,8 @@ const driverResolver = {
         where: { id: id }
       })
 
+      // При отправке данных без newPassword выдаёт ошибку, что newPassword не может быть undefined, переписать условия проверки инпутов
+
       for (let key in input) {
         if (
           key !== "newPassword" &&
