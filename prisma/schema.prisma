@@ -180,6 +180,7 @@ model AirlinePersonal {
   name                String
   number              String?
   email               String?
+  login               String?
   password            String?
   gender              String?
   married             Boolean?              @default(false)

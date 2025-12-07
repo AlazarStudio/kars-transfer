@@ -29,7 +29,7 @@ const airlineResolver = {
             where: { active: true },
             include: {
               staff: true,
-              department: true,
+              department: true
               // prices: true
             },
             orderBy: { name: "asc" }
@@ -40,7 +40,7 @@ const airlineResolver = {
             take: take || undefined,
             include: {
               staff: true,
-              department: true,
+              department: true
               // prices: true
             },
             orderBy: { name: "asc" }
@@ -56,7 +56,7 @@ const airlineResolver = {
         include: {
           staff: true,
           department: true,
-          logs: true,
+          logs: true
           // prices: true, // включаем тарифы
           // airportOnAirlinePrice: true
         }
@@ -101,7 +101,7 @@ const airlineResolver = {
 
       // Основные данные
       const data = {
-        ...input,
+        ...input
         // mealPrice: input.mealPrice || defaultMealPrice,
         // images: imagePaths,
         // Используем nested create для создания тарифных договоров
@@ -123,11 +123,10 @@ const airlineResolver = {
         data,
         include: {
           staff: true,
-          department: true,
+          department: true
           // prices: true
         }
       })
-
 
       // await logAction({
       //   context,
@@ -428,9 +427,11 @@ const airlineResolver = {
 
         const airlineWithRelations = await prisma.airline.findUnique({
           where: { id },
-          include: { department: true, staff: true,
+          include: {
+            department: true,
+            staff: true
             //  prices: true
-             }
+          }
         })
         await logAction({
           context,
@@ -441,7 +442,7 @@ const airlineResolver = {
         pubsub.publish(AIRLINE_UPDATED, {
           airlineUpdated: airlineWithRelations
         })
-  
+
         return airlineWithRelations
       } catch (error) {
         const timestamp = new Date().toISOString()
@@ -452,6 +453,42 @@ const airlineResolver = {
         )
         throw new Error("Не удалось обновить авиакомпанию")
       }
+    },
+
+    updateAirlinePerson: async (_, { id, input }, context) => {
+      const { email, password, oldPassword } = input
+      const currentUser = await prisma.airlinePersonal.findUnique({
+        where: { id }
+      })
+      // Обновляем данные существующего сотрудника
+      const updatedData = {}
+      if (email !== undefined) updatedData.email = email
+      if (password) {
+        if (!oldPassword) {
+          throw new Error(
+            "Для обновления пароля необходимо указать предыдущий пароль."
+          )
+        }
+        // Проверяем, что oldPassword совпадает с текущим паролем
+        const valid = await argon2.verify(currentUser.password, oldPassword)
+        if (!valid) {
+          throw new Error("Указан неверный пароль.")
+        }
+        // Хэшируем новый пароль и добавляем в объект обновления
+        const hashedPassword = await argon2.hash(password)
+        updatedData.password = hashedPassword
+      }
+
+      await prisma.airlinePersonal.update({
+        where: { id },
+        data: updatedData
+      })
+      await logAction({
+        context,
+        action: "update_airline",
+        description: `Пользователь  <span style='color:#545873'> ${user.name} </span>  обновил данные пользователя  <span style='color:#545873'> ${person.name} </span> `,
+        airlineId: id
+      })
     },
 
     deleteAirline: async (_, { id }, context) => {

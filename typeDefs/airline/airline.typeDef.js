@@ -78,9 +78,17 @@ const airlineTypeDef = /* GraphQL */ `
     id: ID
     name: String
     number: String
+    email: String
+    password: String
     positionId: ID
     gender: String
     departmentId: ID
+  }
+
+  input updateAirPersInput {
+    email: String
+    password: String
+    oldPassword: String
   }
 
   input AirlinePaginationInput {
@@ -109,6 +117,7 @@ const airlineTypeDef = /* GraphQL */ `
       input: UpdateAirlineInput!
       images: [Upload!]
     ): Airline!
+    updateAirlinePerson(id: ID!, input: updateAirPersInput!): AirlinePersonal!
     deleteAirline(id: ID!): Airline!
     deleteAirlineDepartment(id: ID!): AirlineDepartment!
     deleteAirlineStaff(id: ID!): AirlinePersonal!

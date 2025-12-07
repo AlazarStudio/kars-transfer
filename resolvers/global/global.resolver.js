@@ -156,7 +156,8 @@ const globalResolver = {
           ...jwtPayload,
           driverId: entity.id,
           role: "DRIVER",
-          organizationId: entity.organizationId
+          organizationId: entity.organizationId,
+          registrationStatus: entity.registrationStatus
         }
         // если нужен refreshToken для водителя — тут же создаёшь/сохраняешь
       }

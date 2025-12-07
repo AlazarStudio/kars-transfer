@@ -210,7 +210,8 @@ app.use(
             email: true,
             organizationId: true,
             active: true,
-            rating: true
+            rating: true,
+            registrationStatus: true
           }
         })
         subject = driver
