@@ -35,7 +35,7 @@ const transferResolver = {
         airlineId
       } = pagination
 
-      const whereInput = {}
+      let whereInput = {}
 
       if (driverId != undefined) {
         driverId = driverId
