@@ -38,19 +38,19 @@ const transferResolver = {
       const whereInput = {}
 
       if (driverId != undefined) {
-        where.driverId = driverId
+        driverId = driverId
       }
       if (personId != undefined) {
-        where.personId = personId
+        personId = personId
       }
       if (dispatcherId != undefined) {
-        where.dispatcherId = dispatcherId
+        dispatcherId = dispatcherId
       }
       if (organizationId != undefined) {
-        where.organizationId = organizationId
+        organizationId = organizationId
       }
       if (airlineId != undefined) {
-        where.airlineId = airlineId
+        airlineId = airlineId
       }
 
       const transfers = all
@@ -63,7 +63,7 @@ const transferResolver = {
             take: take
           })
 
-      const totalCount = transfers.count()
+      const totalCount = await prisma.transfer.count({ where: whereInput })
 
       return { transfers, totalCount }
     },
