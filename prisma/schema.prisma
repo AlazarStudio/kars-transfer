@@ -472,6 +472,7 @@ model Driver {
   organizationConfirmed  Boolean?
   documents              DriverDocuments?
   registrationStatus     DriverRegistrationStatus @default(PENDING)
+  refusalReason          String?
   location               GeoPoint?
   rating                 Float?
   transfers              Transfer[]

@@ -221,6 +221,7 @@ const transferTypeDef = /* GraphQL */ `
     personId: ID
     dispatcherId: ID
     organizationId: ID
+    airlineId: ID
     all: Boolean
     skip: Int
     take: Int

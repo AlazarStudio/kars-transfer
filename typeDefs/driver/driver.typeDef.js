@@ -49,6 +49,7 @@ const driverTypeDef = /* GraphQL */ `
     organizationConfirmed: Boolean
     documents: DriverDocuments
     registrationStatus: DriverRegistrationStatus
+    refusalReason: String
     location: GeoPoint
     rating: Float
     transfers: [Transfer]
@@ -98,6 +99,7 @@ const driverTypeDef = /* GraphQL */ `
     organizationConfirmed: Boolean
     # documents: DriverDocumentsUpdateInput
     registrationStatus: DriverRegistrationStatus
+    refusalReason: String
     active: Boolean
     online: Boolean
   }

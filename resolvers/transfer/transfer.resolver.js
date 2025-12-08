@@ -24,57 +24,46 @@ const DATE_FIELDS = [
 const transferResolver = {
   Query: {
     transfers: async (_, { pagination }, context) => {
-      const { skip, take, all } = pagination || {}
-      const totalCount = await prisma.transfer.count() // добавить позже фильтрацию
+      const {
+        skip,
+        take,
+        all,
+        driverId,
+        personId,
+        dispatcherId,
+        organizationId,
+        airlineId
+      } = pagination
+
+      const whereInput = {}
+
+      if (driverId != undefined) {
+        where.driverId = driverId
+      }
+      if (personId != undefined) {
+        where.personId = personId
+      }
+      if (dispatcherId != undefined) {
+        where.dispatcherId = dispatcherId
+      }
+      if (organizationId != undefined) {
+        where.organizationId = organizationId
+      }
+      if (airlineId != undefined) {
+        where.airlineId = airlineId
+      }
+
       const transfers = all
-        ? await prisma.transfer.findMany({}) // добавить позже фильтрацию
+        ? await prisma.transfer.findMany({
+            where: whereInput
+          }) // добавить позже фильтрацию
         : await prisma.transfer.findMany({
+            where: whereInput,
             skip: skip,
             take: take
           })
 
-      // const moscowDates = []
-
-      // for (let transfer of transfers) {
-      //   moscowDates.push({
-      //     scheduledPickupAt: dateFormatter(transfer["scheduledPickupAt"]),
-      //     driverAssignmentAt: dateFormatter(transfer["driverAssignmentAt"]),
-      //     orderAcceptanceAt: dateFormatter(transfer["orderAcceptanceAt"]),
-      //     arrivedToPassengerAt: dateFormatter(transfer["arrivedToPassengerAt"]),
-      //     departedAt: dateFormatter(transfer["departedAt"]),
-      //     arrivedAt: dateFormatter(transfer["arrivedAt"]),
-      //     finishedAt: dateFormatter(transfer["finishedAt"]),
-      //     createdAt: dateFormatter(transfer["createdAt"]),
-      //     updatedAt: dateFormatter(transfer["updatedAt"])
-      //   })
-      // }
-
-      // for (let i in transfers) {
-      //   Object.assign(transfers[i], moscowDates[i])
-      // }
-
-      const dateKeys = [
-        "scheduledPickupAt",
-        "driverAssignmentAt",
-        "orderAcceptanceAt",
-        "arrivedToPassengerAt",
-        "departedAt",
-        "arrivedAt",
-        "finishedAt",
-        "createdAt",
-        "updatedAt"
-      ]
-
-      for (let transfer of transfers) {
-        const moscowDate = {}
-        for (let key in transfer) {
-          if (dateKeys.includes(key)) {
-            moscowDate[key] = dateFormatter(transfer[key])
-          }
-        }
-        // moscowDates.push(moscowDate)
-        // Object.assign(transfer, moscowDate)
-      }
+      const totalCount = transfers.count()
 
       return { transfers, totalCount }
     },
