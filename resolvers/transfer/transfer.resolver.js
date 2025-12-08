@@ -38,19 +38,19 @@ const transferResolver = {
       let whereInput = {}
 
       if (driverId != undefined) {
-        driverId = driverId
+        whereInput.driverId = driverId
       }
       if (personId != undefined) {
-        personId = personId
+        whereInput.personId = personId
       }
       if (dispatcherId != undefined) {
-        dispatcherId = dispatcherId
+        whereInput.dispatcherId = dispatcherId
       }
       if (organizationId != undefined) {
-        organizationId = organizationId
+        whereInput.organizationId = organizationId
       }
       if (airlineId != undefined) {
-        airlineId = airlineId
+        whereInput.airlineId = airlineId
       }
 
       const transfers = all
